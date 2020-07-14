@@ -2,7 +2,6 @@ import time
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
-from spider.api.ttypes import SceneryInfo
 
 
 def get_map_data():
@@ -84,6 +83,7 @@ def get_map_data():
                 # 建立字典映射关系
                 cityName_cityInfo[city_name] = infoName_infoValue
                 infoName_infoValue = {}
+    browser.quit()
     return cityName_cityInfo
 
 
@@ -99,6 +99,7 @@ def get_scenery_info(url):
     # 定义要返回的对象列表
     scenery_info_list = []
 
+    # sight：必游  restaurant：必吃   shopping：必逛
     tag_list = ["sight", "restaurant", "shopping"]
     for i in range(3):
         ActionChains(browser).move_to_element(
@@ -116,17 +117,17 @@ def get_scenery_info(url):
                 if handle != main_window:
                     browser.switch_to.window(handle)
             # 构造 SceneryInfo 对象
-            sceneryInfo = SceneryInfo()
+            scenery_info = {}
             # 设置景点标签
-            sceneryInfo.tag = tag_list[i]
+            scenery_info["tag"] = tag_list[i]
             # 定义评论字典供使用
             comments_dict = {}
             if i == 0:
                 # 对应“必游”标签情形，其页面解析方法不同
                 # 获取景点名称
-                sceneryInfo.name = browser.find_element_by_css_selector(
+                scenery_info["name"] = browser.find_element_by_css_selector(
                     '#__next > div.poiDetailPageWrap > div > div.baseInfoModule > div.baseInfoMain > div.title > h1').text
-                # print(sceneryInfo.name)
+                # print(scenery_info["name"])
                 # 获取评论详情
                 comments_elements = browser.find_elements_by_css_selector("span.hotTag")
                 # 根据标签内容筛选除去无用评论标签分类
@@ -142,9 +143,9 @@ def get_scenery_info(url):
                 # print(comments_dict)
             else:
                 # 获取景点名称
-                sceneryInfo.name = browser.find_element_by_css_selector("div.f_left").find_element_by_tag_name(
+                scenery_info["name"] = browser.find_element_by_css_selector("div.f_left").find_element_by_tag_name(
                     "h1").text
-                # print(sceneryInfo.name)
+                # print(scenery_info["name"])
                 # 获取评论详情
                 comments_elements = browser.find_element_by_css_selector("ul.tablist").find_elements_by_tag_name("li")
                 # 筛除第 1 个评论标签
@@ -157,14 +158,15 @@ def get_scenery_info(url):
                     comments_num = comments_element.text.split("(")[1].split(")")[0]
                     comments_dict[comments_tag] = comments_num
                 # print(comments_dict)
-            sceneryInfo.comments = comments_dict
-            scenery_info_list.append(sceneryInfo)
+            scenery_info["comments"] = comments_dict
+            scenery_info_list.append(scenery_info)
             # 清空元素内容以便下一循环使用
             comments_dict = {}
-            sceneryInfo = None
+            scenery_info = {}
             # 关闭新打开的页面并切换回主窗口
             browser.close()
             browser.switch_to.window(main_window)
+    browser.quit()
     return scenery_info_list
 
 
@@ -200,10 +202,10 @@ def get_scenery_info(url):
 #     browser.close()
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # get_latitude_longitude()
-    # scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
-    # for scenery_info in scenery_info_list:
-    #     print(scenery_info.name + " == " + scenery_info.tag + " == " + str(scenery_info.comments))
+    scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
+    for scenery_info in scenery_info_list:
+        print(str(scenery_info))
     # get_map_data()
 
