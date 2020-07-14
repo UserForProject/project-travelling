@@ -22,7 +22,6 @@ def get_map_data():
     for url in urls:
         # 访问页面
         browser.get(url)
-        time.sleep(1)
 
         # 获取城市详细页面的url
         a_elements = browser.find_elements_by_css_selector("body > div.content.cf > div.main > div.search-content.cf "
@@ -35,7 +34,6 @@ def get_map_data():
         # 访问到城市的详情页面以进一步获取数据
         for city_url in city_urls:
             browser.get(city_url)
-            time.sleep(1)
 
             try:
                 # 设置一些条件筛选掉非中国省份
@@ -202,10 +200,15 @@ def get_scenery_info(url):
 #     browser.close()
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # get_latitude_longitude()
-    scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
-    for scenery_info in scenery_info_list:
-        print(str(scenery_info))
+    # scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
+    # for scenery_info in scenery_info_list:
+    #     print(str(scenery_info))
+    # start = time.time()
     # get_map_data()
+    # end = time.time()
+    #
+    # print(end - start)
+
 
