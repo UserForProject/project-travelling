@@ -1,5 +1,7 @@
+import json
 import time
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 
@@ -35,23 +37,22 @@ def get_map_data():
         for city_url in city_urls:
             browser.get(city_url)
 
-            try:
-                # 设置一些条件筛选掉非中国省份
-                weather_element = browser.find_element_by_id("WeaTher")
-            except:
+            # 设置一些条件筛选掉非中国省份
+            weather_element = element_filter(browser, "WeaTher", "id")
+            if weather_element is None:
                 # 获取当前省份|直辖市|特别行政区名称
                 city_name = browser.find_element_by_css_selector("div.f_left").find_element_by_tag_name("a").text
                 if len(city_name) == 0 or len(city_name) > 3:
                     continue
                 # print(city_name)
                 # 获取“游记分享“篇数、“精彩照片”张数、“实用问答”个数
-                try:
+                data_element = element_filter(browser, "dl.datacount", "css")
+                if data_element is not None:
                     # 对应非省份的情况
-                    data_count_elements = browser.find_element_by_css_selector(
-                        "dl.datacount").find_elements_by_tag_name("dd")
+                    data_count_elements = data_element.find_elements_by_tag_name("dd")
                     # print(city_name)
                     infoName_infoValue["url"] = city_url
-                except:
+                else:
                     # 第一热门旅游城市
                     hot_city = browser.find_element_by_css_selector("div.hot_destlist.cf").find_element_by_tag_name(
                         "li")
@@ -77,7 +78,7 @@ def get_map_data():
                 # 获取“去过”人数
                 been_number = int(browser.find_element_by_id("emWentValueID").text)
                 infoName_infoValue["been_to"] = been_number
-                print(infoName_infoValue)
+                # print(infoName_infoValue)
                 # 建立字典映射关系
                 cityName_cityInfo[city_name] = infoName_infoValue
                 infoName_infoValue = {}
@@ -85,12 +86,27 @@ def get_map_data():
     return cityName_cityInfo
 
 
+def element_filter(driver, locator, way):
+    if way == "css":
+        try:
+            target_element = driver.find_element_by_css_selector(locator)
+            return target_element
+        except NoSuchElementException as error:
+            return None
+    elif way == "id":
+        try:
+            target_element = driver.find_element_by_id(locator)
+            return target_element
+        except NoSuchElementException as error:
+            return None
+
+
 def get_scenery_info(url):
     # 设置无头浏览器进行爬取
-    # chrome_options = Options()
-    # chrome_options.add_argument('--headless')
-    # browser = webdriver.Chrome(chrome_options=chrome_options)
-    browser = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    browser = webdriver.Chrome(chrome_options=chrome_options)
+    # browser = webdriver.Chrome()
     browser.get(url)
     main_window = browser.current_window_handle
 
@@ -192,16 +208,18 @@ def get_scenery_info(url):
 #         time.sleep(1)
 #         la_lo_info = browser.find_element_by_id("centerDiv").text
 #         info_dict = {}
-#         info_dict["latitude"] = int(la_lo_info.split('  ')[0].split(', ')[0])
-#         info_dict["longitude"] = int(la_lo_info.split('  ')[0].split(', ')[1])
+#         info_dict["latitude"] = float(la_lo_info.split('  ')[0].split(', ')[0])
+#         info_dict["longitude"] = float(la_lo_info.split('  ')[0].split(', ')[1])
 #         city_la_lo_dict[name] = info_dict
 #         print(name + ": " + str(info_dict))
 #
-#     browser.close()
+#     browser.quit()
+#     with open("map_data.json", "w") as f:
+#         f.write(json.dumps(city_la_lo_dict, ensure_ascii=False, indent=4, separators=(',', ':')))
 
 
 # if __name__ == "__main__":
-    # get_latitude_longitude()
+#     get_latitude_longitude()
     # scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
     # for scenery_info in scenery_info_list:
     #     print(str(scenery_info))
