@@ -68,7 +68,7 @@ class Mapper:
 
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # m = Mapper()
     # pprint.pprint(m.getAttractionData("上海"))
     # c = list(m.client.test.info.find({"parent":ObjectId("5f0ac42e5c57000026007281")}))
