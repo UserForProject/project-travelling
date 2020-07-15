@@ -1,5 +1,5 @@
 import pymongo
-import datetime
+from threading import Timer
 from spider.spider_ctrip import *
 from spider.api.ttypes import SceneryInfo
 # import pprint
@@ -10,23 +10,37 @@ host = "192.168.2.108"
 port = "27017"
 
 
+
+
 class Mapper:
+    client = pymongo.MongoClient('mongodb://{}:{}@{}:{}/'.format(user, pwd, host, port))
+    mapdata = client["microTravelling"]["mapdata"]
+
     def __init__(self):
-        self.client = pymongo.MongoClient('mongodb://{}:{}@{}:{}/'.format(user, pwd, host, port))
-        self.db = self.client["microTravelling"]
+        # 每小时进行一次数据更新，初始化时首先进行一次更新
+        t = Timer(0, self.updateInfo)
+        t.start()
+
+    def updateInfo(self):
+        # 进行地图相关数据的更新
+        # 每1h更新一次数据
+        t = Timer(3600, self.updateInfo)
+        t.start()
+        spider_data = get_map_data()
+        keys = spider_data.keys()
+        for key in keys:
+            temp = spider_data[key]
+            temp["name"] = key
+            Mapper.mapdata.update_one({"name": key}, {"$set": temp}, True)
+        urls = list(Mapper.mapdata.find({},{"url": 1}))
+        for item in urls:
+            url = item["url"]
+            data = get_scenery_info(url)
+            Mapper.mapdata.update_one({"url": url}, {"$set": {"attractions": data}})
 
     def getLocationInfo(self):
-        today = datetime.datetime.now().strftime('%Y-%m-%d')
-        mapdata = self.db["mapdata"]
-        if mapdata.count_documents({"date":today}) == 0:
-            # 调用爬虫 爬取数据 格式化 存储进数据库
-            spider_data = get_map_data()
-            keys = spider_data.keys()
-            for key in keys:
-                temp = spider_data[key]
-                temp["name"] = key
-                mapdata.update_one({"name": key}, temp, True)
-        all_provinces = list(mapdata.find({}, {"_id": 0, "date": 0, "url": 0}))
+        # 地图初始化相关数据
+        all_provinces = list(Mapper.mapdata.find({}, {"_id": 0, "url": 0, "attractions": 0}))
         # 数据格式化
         data = {}
         for item in all_provinces:
@@ -37,40 +51,29 @@ class Mapper:
         return data
 
     def getAttractionData(self, name):
-        today = datetime.datetime.now().strftime('%Y-%m-%d')
-        mapdata = self.db["mapdata"]
-        parent_data = mapdata.find({"name": {'$regex': '.*{}.*'.format(name)}}, {"name": 1, "url": 1, "date": 1})
-        parent_data = list(parent_data)
-        if len(parent_data) == 0:
+        # 查询某具体地点的相关景点数据
+        attractions = list(Mapper.mapdata.find({"name": {'$regex': '.*{}.*'.format(name)}}, {"attractions": 1, "url": 1}))
+        if len(attractions) == 0:
             print("无查询结果！")
             return None
-        elif len(parent_data) > 1:
+        elif len(attractions) > 1:
             print("查询结果过多，无法返回精确结果，请重试！")
             return None
-        if "date" not in parent_data[0].keys() or parent_data[0]["date"] != today:
-            #调用爬虫对数据进行更新
-            new_data = get_scenery_info(parent_data[0]["url"])
-            mapdata.update_one({"name": parent_data[0]["name"]}, {'$set':{"date": today, "attractions": new_data}})
-        attractions = list(mapdata.find({"name": parent_data[0]["name"]}, {"attractions": 1}))
-        attractions = attractions[0]["attractions"]
+        if "attractions" not in attractions[0].keys():
+            # 紧急执行一次爬虫获取相关信息
+            attractions = get_scenery_info(attractions[0]["url"])
+        else:
+            attractions = attractions[0]["attractions"]
         data = []
+        # 数据格式化
         for item in attractions:
             temp = SceneryInfo()
             temp.name = item['name']
             temp.tag = item['tag']
             temp.comments = {}
+            # 防止返回结果是字符串
             for k in item['comments'].keys():
                 temp.comments[k] = int(item['comments'][k])
             data.append(temp)
         return data
 
-
-
-
-
-# if __name__ == "__main__":
-    # m = Mapper()
-    # pprint.pprint(m.getAttractionData("上海"))
-    # c = list(m.client.test.info.find({"parent":ObjectId("5f0ac42e5c57000026007281")}))
-    # print(c)
-    # print(get_map_data())
