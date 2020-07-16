@@ -4,12 +4,12 @@ from spider.spider_ctrip import *
 from spider.api.ttypes import SceneryInfo
 # import pprint
 
+
+# 数据库的基本配置信息
 user = "root"
 pwd = "root"
 host = "192.168.2.108"
 port = "27017"
-
-
 
 
 class Mapper:
@@ -17,26 +17,34 @@ class Mapper:
     mapdata = client["microTravelling"]["mapdata"]
 
     def __init__(self):
-        # 每小时进行一次数据更新，初始化时首先进行一次更新
+        # 每12小时进行一次数据更新，初始化时首先进行一次更新
         t = Timer(0, self.updateInfo)
         t.start()
 
     def updateInfo(self):
         # 进行地图相关数据的更新
-        # 每1h更新一次数据
-        t = Timer(3600, self.updateInfo)
+        # 每12h更新一次数据, 使用timer保证非阻塞式更新
+        # localtime = time.asctime( time.localtime(time.time()) )
+        # print("本地时间为 :", localtime)
+        t = Timer(43200, self.updateInfo)
         t.start()
         spider_data = get_map_data()
         keys = spider_data.keys()
+        # 首先更新地图数据（访问最频繁）
         for key in keys:
             temp = spider_data[key]
             temp["name"] = key
             Mapper.mapdata.update_one({"name": key}, {"$set": temp}, True)
+        # localtime = time.asctime( time.localtime(time.time()) )
+        # print("本地时间为 :", localtime)
+        # 根据更新后的url进行相关数据的更新
         urls = list(Mapper.mapdata.find({},{"url": 1}))
         for item in urls:
             url = item["url"]
             data = get_scenery_info(url)
             Mapper.mapdata.update_one({"url": url}, {"$set": {"attractions": data}})
+        # localtime = time.asctime( time.localtime(time.time()) )
+        # print("本地时间为 :", localtime)
 
     def getLocationInfo(self):
         # 地图初始化相关数据
@@ -60,7 +68,7 @@ class Mapper:
             print("查询结果过多，无法返回精确结果，请重试！")
             return None
         if "attractions" not in attractions[0].keys():
-            # 紧急执行一次爬虫获取相关信息
+            # 紧急执行一次爬虫获取相关信息，但不插入数据库，防止后台更新重复操作占用资源
             attractions = get_scenery_info(attractions[0]["url"])
         else:
             attractions = attractions[0]["attractions"]

@@ -23,7 +23,6 @@ if __name__ == "__main__":
     processor = SpiderService.Processor(handler)
     serverSocket = TSocket.TServerSocket(host='127.0.0.1', port='9091')
     transportFactory = TTransport.TFramedTransportFactory()
-    # 3. 创建 Thrift Server 的 Protocol  = 二进制传输协议
     protocolFactory = TBinaryProtocol.TBinaryProtocolFactory()
     server = TServer.TSimpleServer(processor, serverSocket, transportFactory, protocolFactory)
     print("Server start....")
