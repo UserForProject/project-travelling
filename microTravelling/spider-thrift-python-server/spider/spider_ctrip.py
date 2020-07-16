@@ -107,8 +107,6 @@ def get_scenery_info(url):
     chrome_options.add_argument('--headless')
     browser = webdriver.Chrome(chrome_options=chrome_options)
     # browser = webdriver.Chrome()
-    browser.get(url)
-    main_window = browser.current_window_handle
 
     # 定义要返回的对象列表
     scenery_info_list = []
@@ -116,6 +114,7 @@ def get_scenery_info(url):
     # sight：必游  restaurant：必吃   shopping：必逛
     tag_list = ["sight", "restaurant", "shopping"]
     for i in range(3):
+        browser.get(url)
         ActionChains(browser).move_to_element(
             browser.find_element_by_css_selector("a.{}".format(tag_list[i]))).perform()
         # 获取某标签下的 6 个景点信息
@@ -123,13 +122,12 @@ def get_scenery_info(url):
             spot_elements = browser.find_elements_by_css_selector("#poi_{} > ul > li > a".format(str(i)))
         else:
             spot_elements = browser.find_elements_by_css_selector("#poi_{} > ul > li > a".format(str(i + 1)))
+        # 获取景点 url 列表
+        scenery_url_list = []
         for spot_element in spot_elements:
-            spot_element.click()
-            # 窗口切换
-            all_windows = browser.window_handles
-            for handle in all_windows:
-                if handle != main_window:
-                    browser.switch_to.window(handle)
+            scenery_url_list.append(spot_element.get_attribute("href"))
+        for scenery_url in scenery_url_list:
+            browser.get(scenery_url)
             # 构造 SceneryInfo 对象
             scenery_info = {}
             # 设置景点标签
@@ -177,9 +175,7 @@ def get_scenery_info(url):
             # 清空元素内容以便下一循环使用
             comments_dict = {}
             scenery_info = {}
-            # 关闭新打开的页面并切换回主窗口
-            browser.close()
-            browser.switch_to.window(main_window)
+
     browser.quit()
     return scenery_info_list
 
@@ -220,9 +216,9 @@ def get_scenery_info(url):
 
 # if __name__ == "__main__":
 #     get_latitude_longitude()
-    # scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
-    # for scenery_info in scenery_info_list:
-    #     print(str(scenery_info))
+#     scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
+#     for scenery_info in scenery_info_list:
+        # print(str(scenery_info))
     # start = time.time()
     # get_map_data()
     # end = time.time()
