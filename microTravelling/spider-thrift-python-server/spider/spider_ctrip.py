@@ -218,7 +218,7 @@ def get_scenery_info(url):
 #     get_latitude_longitude()
 #     scenery_info_list = get_scenery_info("https://you.ctrip.com/place/dengfeng1014.html")
 #     for scenery_info in scenery_info_list:
-        # print(str(scenery_info))
+#         print(str(scenery_info))
     # start = time.time()
     # get_map_data()
     # end = time.time()

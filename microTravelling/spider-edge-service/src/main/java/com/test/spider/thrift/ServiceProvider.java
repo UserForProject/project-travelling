@@ -27,12 +27,21 @@ public class ServiceProvider {
         SPIDER
     }
 
+
+
+    public TSocket makesocket(){
+        TSocket socket = new TSocket(spiderServerIp, spiderServerPort, 20000);
+        return socket;
+    }
+
+
+
     // 获取远程服务 = 参数：ip、端口、服务类型(enum)
     // 获取远程服务 == 返回类型(用户、消息) -- 泛型
-    public <T> T getService(String ip, int port, ServiceType serverType){
+    public <T> T getService(TSocket socket, ServiceType serverType) {
         // RPC - Socket\Transport\Protocol == client&server 保持一致
         // 1. 声明一个 Socket 用来连接 ServerSocket
-        TSocket socket = new TSocket(ip, port, 300000);
+
         // 2. 指定生成一个传输方式对象 -- 基于 Socket 连接创建一个帧传输对象
         TTransport transport = new TFramedTransport(socket);
         // 开启|打开帧传输
@@ -52,18 +61,23 @@ public class ServiceProvider {
             case SPIDER :
                 result = new SpiderService.Client(protocol);
                 break;
-
         }
 
         // 强制类型转换为对应的泛型接口
         return (T)result;
+
     }
+
 
     // 获取爬虫服务的客户端
-    public SpiderService.Client getSpiderService(){
-        return getService(spiderServerIp, spiderServerPort, ServiceType.SPIDER);
+    public SpiderService.Client getSpiderService(TSocket socket){
+
+        return getService(socket, ServiceType.SPIDER);
 
     }
+//    public void socketclose(){
+//        socket.close();
+//    }
 
 //    public SpiderService.Client getSpiderService2(){
 //        return getService(spiderServerIp, spiderServerPort, ServiceType.SPIDER);

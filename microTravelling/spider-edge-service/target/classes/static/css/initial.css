@@ -1,0 +1,158 @@
+html,
+body,
+div,
+span,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+abbr,
+address,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+samp,
+small,
+strong,
+sub,
+sup,
+var,
+b,
+i,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+em,
+i {
+  font-weight: 100;
+  font-style: normal;
+}
+ul,
+ol,
+li {
+  list-style-type: none;
+}
+a {
+  color: #666;
+  text-decoration: none;
+  outline: 0;
+}
+a:hover {
+  text-decoration: none;
+}
+html,
+body {
+  width: 100%;
+  font-family: "微软雅黑";
+}
+/* 布局 */
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.clear:after {
+  display: block;
+  clear: both;
+  content: "";
+  visibility: hidden;
+  height: 0;
+}
+.clear {
+  zoom: 1;
+}
+/* 垂直居中 */
+.flex_ver {
+  -webkit-align-items: center;
+  align-items: center;
+}
+/* 水平居中 */
+.flex_hor {
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+}
+/*  两端对齐*/
+.flex_jus {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+/* 超出文字显示省略号 */
+.ellipses {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.show {
+  display: block;
+}
+.hide {
+  display: none;
+}
+
+.icon {
+  display: inline-block;
+}
+input {
+  font-size: 14px;
+}
+iframe {
+  border: none;
+}
