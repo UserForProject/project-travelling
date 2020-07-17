@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>spider-thrift-server-api</module>
+        <module>spider-edge-service</module>
     </modules>
 
 
