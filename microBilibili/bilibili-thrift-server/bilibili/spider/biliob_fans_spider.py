@@ -1,6 +1,8 @@
 import time
 from selenium import webdriver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
 
 
 def get_up_info():
@@ -25,11 +27,18 @@ def get_up_info():
     for i in range(click_time):
         load_more = browser.find_element_by_css_selector(
             'button.v-btn.v-btn--block.v-btn--depressed.v-btn--flat.v-btn--outlined.v-btn--tile.theme--light.v-size--default.primary--text')
+        # browser.execute_script("arguments[0].scrollIntoView();", load_more)
         load_more.click()
-        time.sleep(3)
+        time.sleep(2)
 
     info_elements = browser.find_elements_by_xpath('/html/body/div/div/div/div/main/div/div/div/div[2]/div/div[2]/div[2]/span/div')
+    # 鼠标移动到指定元素以使用 js 将头像图片动态加载出来
     for info_element in info_elements:
+        ActionChains(browser).move_to_element(info_element).perform()
+
+    for info_element in info_elements:
+        # ActionChains(browser).move_to_element(info_element).perform()
+        time.sleep(0.2)
         uid_fans_dict = {}
         uid_info = info_element.find_element_by_css_selector('div.row.no-gutters').text
         # 获取排行榜 up主 的 uid
@@ -43,12 +52,12 @@ def get_up_info():
         # print(fans_num)
         # 获取排行榜 up主 的头像
         face_element = info_element.find_element_by_css_selector("div.v-image__image.v-image__image--cover")
-        face_url = face_element.get_attribute('style')
-        'v-image__image v-image__image--cover'
-        print(face_url)
+        face_url = face_element.get_attribute('style').split("\"")[1]
+        # print(face_url)
         uid_fans_dict['name'] = username
         uid_fans_dict['uid'] = int(uid)
         uid_fans_dict['fans'] = int(fans_num)
+        uid_fans_dict['face'] = face_url
         up_info_list.append(uid_fans_dict)
 
     browser.quit()
@@ -57,7 +66,7 @@ def get_up_info():
 
 # def
 
-if __name__ == '__main__':
-    info_list = get_up_info()
-    for info in info_list:
-        print(info)
+# if __name__ == '__main__':
+#     info_list = get_up_info()
+#     for info in info_list:
+#         print(info)
