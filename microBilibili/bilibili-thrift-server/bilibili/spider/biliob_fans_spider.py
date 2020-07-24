@@ -1,3 +1,4 @@
+import os
 import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -184,8 +185,9 @@ def element_exists(element, tag_name):
     except NoSuchElementException:
         return False
 
+
 # 获取各分区播放量的数据
-def get_tags_and_weight():
+def get_tags_and_weight(output_path):
     url = 'https://www.bilibili.com/ranking'
     # 设置无头浏览器进行爬取
     chrome_options = Options()
@@ -197,47 +199,50 @@ def get_tags_and_weight():
     # 定义一个键值对 标签：比重 的列表，用于返回
     tags_weight_list = []
 
-    video_url_list = []
+    url_pts_dict = {}
     # 找到各个分区的点击按钮，逐个点击获取排行榜上所有分区标签，获得榜上所有视频的 url 链接 -- 1200
     subarea_tags = browser.find_element_by_css_selector('ul.rank-tab').find_elements_by_tag_name('li')
-    for i in range(1, 2):
+    for i in range(1, 13):
         subarea_tags[i].click()
         time.sleep(0.6)
         video_elements = browser.find_elements_by_css_selector('li.rank-item')
         for video_element in video_elements:
             video_url = video_element.find_element_by_css_selector('div.img').find_element_by_tag_name('a').get_attribute('href')
-            video_url_list.append(video_url)
+            pts = video_element.find_element_by_css_selector('div.pts').find_element_by_tag_name('div').text
+            url_pts_dict[video_url] = int(pts)
+
+    # 每次调用函数写入之前清空文件内容
+    with open(output_path, 'w') as f:
+        f.truncate()
 
     # 访问各个视频详细页面，获取播放量、标签数据
     # 设置标签的权重
     weight = 0.8
-    for video_url in video_url_list:
+    for video_url in list(url_pts_dict.keys()):
         browser.get(video_url)
-        # 获取播放量数据
-        play_amount_str = browser.find_element_by_css_selector('span.view').get_attribute('title').split('数')[1]
-        while play_amount_str == '--':
-            # 等待页面加载
-            time.sleep(0.1)
-            play_amount_str = play_amount_str = browser.find_element_by_css_selector('span.view').get_attribute('title').split('数')[1]
-        play_amount = int(play_amount_str)
-        print(play_amount)
         time.sleep(0.5)
         # 获取标签
-        tag_elements = browser.find_elements_by_css_selector('a.tag-link')
+        try:
+            tag_elements = browser.find_elements_by_css_selector('a.tag-link')
+        except NoSuchElementException:
+            # 对应视频链接里没有标签数据的情况（动画番剧）
+            continue
         for tag_element in tag_elements:
-            # 定义字典存储 标签名：值
-            tag_weight_dict = {}
             tag_name = tag_element.text
             # 判断该标签是否标蓝（蓝色代表该标签更重要，所占权重更大）
             if element_exists(tag_element, 'img'):
-                tag_weight_dict[tag_name] = play_amount * weight
+                tag_weight = round(url_pts_dict[video_url] * weight, 1)
             else:
-                tag_weight_dict[tag_name] = play_amount * (1 - weight)
-            tags_weight_list.append(tag_weight_dict)
-            print(tag_weight_dict)
+                tag_weight = round(url_pts_dict[video_url] * (1 - weight), 1)
+            # print(tag_name + ': ' + str(tag_weight))
+            # 将得到的数据写入文件
+            with open(output_path, 'a', encoding='UTF-8') as f:
+                f.write(tag_name)
+                f.write(' ')
+                f.write(str(tag_weight))
+                f.write(os.linesep)
 
     browser.quit()
-    return tags_weight_list
 
 
 
@@ -247,4 +252,4 @@ def get_tags_and_weight():
     #     print(info)
     # get_top50_up_info([1, 2, 3])
     # print(get_detailed_info(26366366))
-    # get_tags_and_weight()
+    # get_tags_and_weight('D://comment.txt')
