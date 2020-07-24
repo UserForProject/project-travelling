@@ -8,7 +8,7 @@ from spider.api.ttypes import SceneryInfo
 # 数据库的基本配置信息
 user = "root"
 pwd = "root"
-host = "192.168.110.14"
+host = "192.168.2.108"
 port = "27017"
 
 
