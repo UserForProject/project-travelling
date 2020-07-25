@@ -186,7 +186,7 @@ def element_exists(element, tag_name):
         return False
 
 
-# 获取各分区播放量的数据
+# 获取各分区视频下的标签和综合评分的数据
 def get_tags_and_weight(output_path):
     url = 'https://www.bilibili.com/ranking'
     # 设置无头浏览器进行爬取
@@ -195,9 +195,6 @@ def get_tags_and_weight(output_path):
     browser = webdriver.Chrome(chrome_options=chrome_options)
     # browser = webdriver.Chrome()
     browser.get(url)
-
-    # 定义一个键值对 标签：比重 的列表，用于返回
-    tags_weight_list = []
 
     url_pts_dict = {}
     # 找到各个分区的点击按钮，逐个点击获取排行榜上所有分区标签，获得榜上所有视频的 url 链接 -- 1200
@@ -238,12 +235,38 @@ def get_tags_and_weight(output_path):
             # 将得到的数据写入文件
             with open(output_path, 'a', encoding='UTF-8') as f:
                 f.write(tag_name)
-                f.write(' ')
+                f.write('\t')
                 f.write(str(tag_weight))
                 f.write(os.linesep)
 
     browser.quit()
 
+
+# 获取各分区视频的综合评分之和
+def get_subarea_heat():
+    url = 'https://www.bilibili.com/ranking'
+    # 设置无头浏览器进行爬取
+    # chrome_options = Options()
+    # chrome_options.add_argument('--headless')
+    # browser = webdriver.Chrome(chrome_options=chrome_options)
+    browser = webdriver.Chrome()
+    browser.get(url)
+
+    subarea_pts_dict = {}
+    # 找到各个分区的点击按钮，逐个点击获取排行榜上所有分区标签，获得榜上所有视频的 url 链接 -- 1200
+    subarea_tags = browser.find_element_by_css_selector('ul.rank-tab').find_elements_by_tag_name('li')
+    for i in range(1, 13):
+        subarea_tags[i].click()
+        subarea_name = subarea_tags[i].text
+        time.sleep(0.6)
+        video_elements = browser.find_elements_by_css_selector('li.rank-item')
+        pts_sum = 0
+        for video_element in video_elements:
+            pts = video_element.find_element_by_css_selector('div.pts').find_element_by_tag_name('div').text
+            pts_sum = pts_sum + int(pts)
+        subarea_pts_dict[subarea_name] = pts_sum
+        print(subarea_name + ": " + str(pts_sum))
+    return subarea_pts_dict
 
 
 # if __name__ == '__main__':
@@ -253,3 +276,4 @@ def get_tags_and_weight(output_path):
     # get_top50_up_info([1, 2, 3])
     # print(get_detailed_info(26366366))
     # get_tags_and_weight('D://comment.txt')
+    # get_subarea_heat()
