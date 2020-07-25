@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>travel</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/public/jquery.min.js"></script>
+    <script src="/public/echarts.js"></script>
+    <script src="/public/bmap.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1nCQCnDr3Nt3GKDVeBmKGe2Y"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js"></script>
+</head>
+
+<body>
+    <div class="main">
+        <div class="bg" id="container"></div>
+        <div class="itemize_operation">
+            <div class="sort_box">
+                <div class="sort active">
+                    <span data-type="all">点图</span>
+                </div>
+<!--                <div class="sort">-->
+<!--                    <span data-type="normal">热力图</span>-->
+<!--                </div>-->
+                <div class="sort">
+                    <form method="post">
+                        <input type="text" name="name">
+                        <input type="submit" value="搜索">
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="/js/index2.js"></script>
+</body>
+
+</html>
