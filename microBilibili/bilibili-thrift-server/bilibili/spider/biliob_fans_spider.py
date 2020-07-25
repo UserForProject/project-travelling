@@ -269,11 +269,11 @@ def get_subarea_heat():
     return subarea_pts_dict
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # info_list = get_up_info()
     # for info in info_list:
     #     print(info)
     # get_top50_up_info([1, 2, 3])
-    # print(get_detailed_info(26366366))
+    print(get_detailed_info(26366366))
     # get_tags_and_weight('D://comment.txt')
     # get_subarea_heat()

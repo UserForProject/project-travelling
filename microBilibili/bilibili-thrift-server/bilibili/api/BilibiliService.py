@@ -399,11 +399,11 @@ class getTopUpFans_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype19, _size16) = iprot.readListBegin()
-                    for _i20 in range(_size16):
-                        _elem21 = UserInfo()
-                        _elem21.read(iprot)
-                        self.success.append(_elem21)
+                    (_etype26, _size23) = iprot.readListBegin()
+                    for _i27 in range(_size23):
+                        _elem28 = UserInfo()
+                        _elem28.read(iprot)
+                        self.success.append(_elem28)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -420,8 +420,8 @@ class getTopUpFans_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter22 in self.success:
-                iter22.write(oprot)
+            for iter29 in self.success:
+                iter29.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -512,11 +512,11 @@ class getTopIncreasingUp_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype26, _size23) = iprot.readListBegin()
-                    for _i27 in range(_size23):
-                        _elem28 = UserInfo()
-                        _elem28.read(iprot)
-                        self.success.append(_elem28)
+                    (_etype33, _size30) = iprot.readListBegin()
+                    for _i34 in range(_size30):
+                        _elem35 = UserInfo()
+                        _elem35.read(iprot)
+                        self.success.append(_elem35)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -533,8 +533,8 @@ class getTopIncreasingUp_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter29 in self.success:
-                iter29.write(oprot)
+            for iter36 in self.success:
+                iter36.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -625,11 +625,11 @@ class getTopDecreasingUp_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype33, _size30) = iprot.readListBegin()
-                    for _i34 in range(_size30):
-                        _elem35 = UserInfo()
-                        _elem35.read(iprot)
-                        self.success.append(_elem35)
+                    (_etype40, _size37) = iprot.readListBegin()
+                    for _i41 in range(_size37):
+                        _elem42 = UserInfo()
+                        _elem42.read(iprot)
+                        self.success.append(_elem42)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -646,8 +646,8 @@ class getTopDecreasingUp_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter36 in self.success:
-                iter36.write(oprot)
+            for iter43 in self.success:
+                iter43.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -862,11 +862,11 @@ class getSubareaPlayAmount_result(object):
             if fid == 0:
                 if ftype == TType.MAP:
                     self.success = {}
-                    (_ktype38, _vtype39, _size37) = iprot.readMapBegin()
-                    for _i41 in range(_size37):
-                        _key42 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val43 = iprot.readI32()
-                        self.success[_key42] = _val43
+                    (_ktype45, _vtype46, _size44) = iprot.readMapBegin()
+                    for _i48 in range(_size44):
+                        _key49 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val50 = iprot.readI32()
+                        self.success[_key49] = _val50
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -883,9 +883,9 @@ class getSubareaPlayAmount_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.MAP, 0)
             oprot.writeMapBegin(TType.STRING, TType.I32, len(self.success))
-            for kiter44, viter45 in self.success.items():
-                oprot.writeString(kiter44.encode('utf-8') if sys.version_info[0] == 2 else kiter44)
-                oprot.writeI32(viter45)
+            for kiter51, viter52 in self.success.items():
+                oprot.writeString(kiter51.encode('utf-8') if sys.version_info[0] == 2 else kiter51)
+                oprot.writeI32(viter52)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()

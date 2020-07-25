@@ -32,8 +32,8 @@ struct UserDetailedInfo {
     7:i32 playAmount,
     # 阅读数
     8:i32 readingAmount,
-    # 前三个热门视频，以 视频名称：url 作为键值对存储
-    9:map<string, string> videos,
+    # 前三个热门视频，以字典形式存储，内容包括视频链接、视频封面、视频名称
+    9:list<map<string, string>> videos,
     # up主头像图片的url
     10:string face,
     # up主七天内的粉丝数据
@@ -41,7 +41,7 @@ struct UserDetailedInfo {
 }
 
 service BilibiliService {
-    # 获取粉丝总榜上靠前的up主信息，返回一个 uid：粉丝数 的字典
+    # 获取粉丝总榜上靠前的up主信息，返回一个列表
     list<UserInfo> getTopUpFans();
     # 获取涨粉数据和掉粉数据，返回有序 uid 列表
     list<UserInfo> getTopIncreasingUp();

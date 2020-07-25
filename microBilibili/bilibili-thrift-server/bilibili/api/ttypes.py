@@ -187,14 +187,19 @@ class UserDetailedInfo(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 9:
-                if ftype == TType.MAP:
-                    self.videos = {}
-                    (_ktype1, _vtype2, _size0) = iprot.readMapBegin()
+                if ftype == TType.LIST:
+                    self.videos = []
+                    (_etype3, _size0) = iprot.readListBegin()
                     for _i4 in range(_size0):
-                        _key5 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val6 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        self.videos[_key5] = _val6
-                    iprot.readMapEnd()
+                        _elem5 = {}
+                        (_ktype7, _vtype8, _size6) = iprot.readMapBegin()
+                        for _i10 in range(_size6):
+                            _key11 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                            _val12 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                            _elem5[_key11] = _val12
+                        iprot.readMapEnd()
+                        self.videos.append(_elem5)
+                    iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 10:
@@ -205,10 +210,10 @@ class UserDetailedInfo(object):
             elif fid == 11:
                 if ftype == TType.LIST:
                     self.fansData = []
-                    (_etype10, _size7) = iprot.readListBegin()
-                    for _i11 in range(_size7):
-                        _elem12 = iprot.readI32()
-                        self.fansData.append(_elem12)
+                    (_etype16, _size13) = iprot.readListBegin()
+                    for _i17 in range(_size13):
+                        _elem18 = iprot.readI32()
+                        self.fansData.append(_elem18)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -255,12 +260,15 @@ class UserDetailedInfo(object):
             oprot.writeI32(self.readingAmount)
             oprot.writeFieldEnd()
         if self.videos is not None:
-            oprot.writeFieldBegin('videos', TType.MAP, 9)
-            oprot.writeMapBegin(TType.STRING, TType.STRING, len(self.videos))
-            for kiter13, viter14 in self.videos.items():
-                oprot.writeString(kiter13.encode('utf-8') if sys.version_info[0] == 2 else kiter13)
-                oprot.writeString(viter14.encode('utf-8') if sys.version_info[0] == 2 else viter14)
-            oprot.writeMapEnd()
+            oprot.writeFieldBegin('videos', TType.LIST, 9)
+            oprot.writeListBegin(TType.MAP, len(self.videos))
+            for iter19 in self.videos:
+                oprot.writeMapBegin(TType.STRING, TType.STRING, len(iter19))
+                for kiter20, viter21 in iter19.items():
+                    oprot.writeString(kiter20.encode('utf-8') if sys.version_info[0] == 2 else kiter20)
+                    oprot.writeString(viter21.encode('utf-8') if sys.version_info[0] == 2 else viter21)
+                oprot.writeMapEnd()
+            oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.face is not None:
             oprot.writeFieldBegin('face', TType.STRING, 10)
@@ -269,8 +277,8 @@ class UserDetailedInfo(object):
         if self.fansData is not None:
             oprot.writeFieldBegin('fansData', TType.LIST, 11)
             oprot.writeListBegin(TType.I32, len(self.fansData))
-            for iter15 in self.fansData:
-                oprot.writeI32(iter15)
+            for iter22 in self.fansData:
+                oprot.writeI32(iter22)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -308,7 +316,7 @@ UserDetailedInfo.thrift_spec = (
     (6, TType.I32, 'likes', None, None, ),  # 6
     (7, TType.I32, 'playAmount', None, None, ),  # 7
     (8, TType.I32, 'readingAmount', None, None, ),  # 8
-    (9, TType.MAP, 'videos', (TType.STRING, 'UTF8', TType.STRING, 'UTF8', False), None, ),  # 9
+    (9, TType.LIST, 'videos', (TType.MAP, (TType.STRING, 'UTF8', TType.STRING, 'UTF8', False), False), None, ),  # 9
     (10, TType.STRING, 'face', 'UTF8', None, ),  # 10
     (11, TType.LIST, 'fansData', (TType.I32, None, False), None, ),  # 11
 )
