@@ -50,4 +50,6 @@ service BilibiliService {
     UserDetailedInfo getUpInfo(1:i32 uid);
     # 获取各分区播放量总和信息，返回一个 分区名：总播放量 的字典
     map<string, i32> getSubareaPlayAmount();
+    # 获取词云所需数据，返回 标签：权重 的字典
+    map<string, double> getWordCloud();
 }
