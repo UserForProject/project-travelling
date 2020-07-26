@@ -246,10 +246,10 @@ def get_tags_and_weight(output_path):
 def get_subarea_heat():
     url = 'https://www.bilibili.com/ranking'
     # 设置无头浏览器进行爬取
-    # chrome_options = Options()
-    # chrome_options.add_argument('--headless')
-    # browser = webdriver.Chrome(chrome_options=chrome_options)
-    browser = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    browser = webdriver.Chrome(chrome_options=chrome_options)
+    # browser = webdriver.Chrome()
     browser.get(url)
 
     subarea_pts_dict = {}
