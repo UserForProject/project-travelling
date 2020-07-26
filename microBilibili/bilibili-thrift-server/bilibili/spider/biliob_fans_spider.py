@@ -108,10 +108,10 @@ def get_top50_up_info(uid_list):
 def get_detailed_info(uid):
     url = 'https://space.bilibili.com/{}'.format(uid)
     # 设置无头浏览器进行爬取
-    # chrome_options = Options()
-    # chrome_options.add_argument('--headless')
-    # browser = webdriver.Chrome(chrome_options=chrome_options)
-    browser = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    browser = webdriver.Chrome(chrome_options=chrome_options)
+    #browser = webdriver.Chrome()
     browser.get(url)
 
     # 定义 dict 作为详细信息的返回值
@@ -269,11 +269,11 @@ def get_subarea_heat():
     return subarea_pts_dict
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # info_list = get_up_info()
     # for info in info_list:
     #     print(info)
     # get_top50_up_info([1, 2, 3])
-    print(get_detailed_info(26366366))
+    # print(get_subarea_heat())
     # get_tags_and_weight('D://comment.txt')
     # get_subarea_heat()

@@ -2,11 +2,11 @@ import datetime
 
 import pymongo
 
-from bilibili.spider.biliob_fans_spider import get_up_info, get_fans_num, get_top50_up_info
+from bilibili.spider.biliob_fans_spider import get_up_info, get_fans_num, get_top50_up_info, get_subarea_heat
 
 user = "root"
 pwd = "root"
-host = "192.168.2.108"
+host = "192.168.1.105"
 port = "27017"
 client = pymongo.MongoClient('mongodb://{}:{}@{}:{}/'.format(user, pwd, host, port))
 bilibiliData = client["bilibili"]
@@ -25,7 +25,7 @@ def getUpInfo():
     removeDate = removeDate.strftime("%Y%m%d")
     users.update_many({}, {"$unset": {removeDate: ""}})
     upInfos = get_up_info()
-    # 判断是否为第一次运行程序
+    # 判断是否为第一次运行程序，防止重复更新uid带来的资源消耗
     if users.count() != 0:
         for up in upInfos:
             users.update_one({"uid": up["uid"]}, {"$set": {today: up["fans"]}}, True)
@@ -60,8 +60,18 @@ def getUpInfo():
     for item in upInfos:
         users.update_one({"uid": item["uid"]}, {"$set":{"name": item["name"], "face": item["face"]}})
 
+def getSubAreaInfo():
+    data = get_subarea_heat()
+    subAreaHeat = bilibiliData["subAreaHeat"]
+    # 防止重复更新分区名带来的资源消耗，但后续分区的划分如果更新可能会出现问题
+    if subAreaHeat.count() != 0:
+        for key in data:
+            subAreaHeat.update_one({"name": key}, {"$set": {"heat": data[key]}}, True)
+    else:
+        for key in data:
+            subAreaHeat.insert_one({"name": key, "heat": data[key]})
 
 
-
-if __name__ == "__main__":
-    getUpInfo()
+# if __name__ == "__main__":
+#     getUpInfo()
+#     getSubAreaInfo()

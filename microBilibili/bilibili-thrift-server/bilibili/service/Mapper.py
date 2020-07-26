@@ -9,7 +9,7 @@ from bilibili.spider.biliob_fans_spider import get_detailed_info
 
 user = "root"
 pwd = "root"
-host = "192.168.2.108"
+host = "192.168.1.105"
 port = "27017"
 
 # 运行前先运行update包中的updateBeforeMR脚本
@@ -25,7 +25,6 @@ class Mapper:
         # 强制转换，防止类型错误
         usersInfo = []
         for item in data:
-            print(item)
             temp = UserInfo()
             temp.uid = int(item["uid"])
             temp.fans = int(item[today])
@@ -42,7 +41,6 @@ class Mapper:
         # 强制转换，防止类型错误
         usersInfo = []
         for item in data:
-            print(item)
             temp = UserInfo()
             temp.uid = int(item["uid"])
             temp.fans = int(item["change"])
@@ -59,7 +57,6 @@ class Mapper:
         # 强制转换，防止类型错误
         usersInfo = []
         for item in data:
-            print(item)
             temp = UserInfo()
             temp.uid = int(item["uid"])
             temp.fans = int(item["change"])
@@ -100,16 +97,23 @@ class Mapper:
             detail.fansData.append(data[key])
         return detail
 
-
-
-
     def getSubareaPlayAmount(self):
         """
         返回当日各分区热度字典
         """
+        heatData = list(self.bilibiliData["subAreaHeat"].find({}, {"_id": 0}))
+        res = {}
+        for area in heatData:
+            res[area["name"]] = int(area["heat"])
+        return res
+
+    def getWordCloud(self):
+        """
+        返回当日热度最高的前300个词
+        """
         pass
 
 
-if __name__ == "__main__":
-    m = Mapper()
-    print(m.getUpInfo(326499679))
+# if __name__ == "__main__":
+#     m = Mapper()
+#     m.getSubareaPlayAmount()

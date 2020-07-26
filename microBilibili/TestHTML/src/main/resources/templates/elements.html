@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<title>搜索Up</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="/assets/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
+	<script src="/assets/js/echarts.common.js"></script>
+</head>
+
+<body class="is-preload">
+
+	<!-- Page Wrapper -->
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<header id="header" class="alt">
+			<h1><a href="index">ToString</a></h1>
+			<nav id="nav">
+				<ul>
+					<li class="special">
+						<a href="#menu" class="menuToggle"><span>Menu</span></a>
+						<div id="menu">
+							<ul>
+								<li><a href="index">Home</a></li>
+								<li><a href="generic">Ranking list</a></li>
+								<li><a href="elements">Search</a></li>
+								<li><a href="heat">Heat</a></li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</nav>
+		</header>
+
+
+		<!-- Main -->
+		<article id="main">
+			<header>
+				<div class="container">
+					<form action="">
+							<input type="text" placeholder="please input uid..." id="uid" name="uid"/>
+							<button><i>submit</i></button>
+					</form>
+
+<!--					<input type="text" placeholder="请输入Up主的uid" onkeydown="onKeyDown(event)"-->
+<!--						style="width: 50%; margin: 0 auto;" />-->
+
+<!--					<span class="input-group-btn">-->
+<!--						<i class="glyphicon glyphicon-search"></i>-->
+<!--					</span>-->
+				</div>
+			</header>
+			<section class="wrapper style5">
+				<div class="inner">
+
+					<section>
+						<h4>粉丝变化</h4>
+						<div id="main3" style="width: 100%;height:500px;"></div>
+						<script type="text/javascript">
+							// 基于准备好的dom，初始化echarts实例
+							var myChart = echarts.init(document.getElementById('main3'));
+
+
+							option = {
+								title: {
+									text: '数量（万）'
+								},
+								tooltip: {
+									trigger: 'axis'
+								},
+								legend: {
+									data: ['粉丝数']
+								},
+								grid: {
+									left: '3%',
+									right: '4%',
+									bottom: '3%',
+									containLabel: true
+								},
+								toolbox: {
+									feature: {
+										saveAsImage: {}
+									}
+								},
+								xAxis: {
+									type: 'category',
+									boundaryGap: false,
+									data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+								},
+								yAxis: {
+									type: 'value'
+								},
+								series: [{
+										name: '粉丝数',
+										type: 'line',
+										stack: '总量',
+										data: [120, 132, 101, 134, 90, 230, 210]
+									},
+									
+								]
+							};
+							myChart.setOption(option);
+						</script>
+					</section>
+
+
+
+
+
+
+
+
+				</div>
+			</section>
+		</article>
+
+		<!-- Footer -->
+		<footer id="footer">
+
+			<ul class="copyright">
+				<li> ToString</li>
+			</ul>
+		</footer>
+	</div>
+
+	<!-- Scripts -->
+	<script src="/static/assets/js/jquery.min.js"></script>
+	<script src="/static/assets/js/jquery.scrollex.min.js"></script>
+	<script src="/static/assets/js/jquery.scrolly.min.js"></script>
+	<script src="/static/assets/js/browser.min.js"></script>
+	<script src="/static/assets/js/breakpoints.min.js"></script>
+	<script src="/static/assets/js/util.js"></script>
+	<script src="/static/assets/js/main.js"></script>
+	<script src="/static/assets/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="/static/assets/css/bootstrap.css">
+	<script src="/static/assets/js/search.js"></script>
+
+</body>
+
+</html>

@@ -12,6 +12,7 @@ class ServerHandler:
         """
         返回当日粉丝数最多的前五十位up主具体信息，包括id，昵称，头像url和粉丝总数
         """
+
         return self.m.getTopUpFans()
 
     def getTopIncreasingUp(self):
@@ -37,6 +38,12 @@ class ServerHandler:
         返回当日各分区热度字典
         """
         return self.m.getSubareaPlayAmount()
+
+    def getWordCloud(self):
+        """
+        返回当日热度最高的前300个标签
+        """
+        return self.m.getWordCloud()
 
 
 if __name__ == "__main__":
