@@ -172,7 +172,6 @@ def get_detailed_info(uid):
         video_info_list.append(video_info_dict)
     detailed_info_dict['video'] = video_info_list
 
-    time.sleep(5)
     browser.quit()
     return detailed_info_dict
 
@@ -266,6 +265,8 @@ def get_subarea_heat():
             pts_sum = pts_sum + int(pts)
         subarea_pts_dict[subarea_name] = pts_sum
         print(subarea_name + ": " + str(pts_sum))
+
+    browser.quit()
     return subarea_pts_dict
 
 
