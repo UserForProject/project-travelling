@@ -29,6 +29,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('   getTopDecreasingUp()')
     print('  UserDetailedInfo getUpInfo(i32 uid)')
     print('   getSubareaPlayAmount()')
+    print('   getWordCloud()')
     print('')
     sys.exit(0)
 
@@ -137,6 +138,12 @@ elif cmd == 'getSubareaPlayAmount':
         print('getSubareaPlayAmount requires 0 args')
         sys.exit(1)
     pp.pprint(client.getSubareaPlayAmount())
+
+elif cmd == 'getWordCloud':
+    if len(args) != 0:
+        print('getWordCloud requires 0 args')
+        sys.exit(1)
+    pp.pprint(client.getWordCloud())
 
 else:
     print('Unrecognized method %s' % cmd)

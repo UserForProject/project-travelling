@@ -39,6 +39,9 @@ class Iface(object):
     def getSubareaPlayAmount(self):
         pass
 
+    def getWordCloud(self):
+        pass
+
 
 class Client(Iface):
     def __init__(self, iprot, oprot=None):
@@ -183,6 +186,32 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "getSubareaPlayAmount failed: unknown result")
 
+    def getWordCloud(self):
+        self.send_getWordCloud()
+        return self.recv_getWordCloud()
+
+    def send_getWordCloud(self):
+        self._oprot.writeMessageBegin('getWordCloud', TMessageType.CALL, self._seqid)
+        args = getWordCloud_args()
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_getWordCloud(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = getWordCloud_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.success is not None:
+            return result.success
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "getWordCloud failed: unknown result")
+
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
@@ -193,6 +222,7 @@ class Processor(Iface, TProcessor):
         self._processMap["getTopDecreasingUp"] = Processor.process_getTopDecreasingUp
         self._processMap["getUpInfo"] = Processor.process_getUpInfo
         self._processMap["getSubareaPlayAmount"] = Processor.process_getSubareaPlayAmount
+        self._processMap["getWordCloud"] = Processor.process_getWordCloud
         self._on_message_begin = None
 
     def on_message_begin(self, func):
@@ -326,6 +356,29 @@ class Processor(Iface, TProcessor):
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("getSubareaPlayAmount", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_getWordCloud(self, seqid, iprot, oprot):
+        args = getWordCloud_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = getWordCloud_result()
+        try:
+            result.success = self._handler.getWordCloud()
+            msg_type = TMessageType.REPLY
+        except TTransport.TTransportException:
+            raise
+        except TApplicationException as ex:
+            logging.exception('TApplication exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = ex
+        except Exception:
+            logging.exception('Unexpected exception in handler')
+            msg_type = TMessageType.EXCEPTION
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("getWordCloud", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -907,6 +960,120 @@ class getSubareaPlayAmount_result(object):
 all_structs.append(getSubareaPlayAmount_result)
 getSubareaPlayAmount_result.thrift_spec = (
     (0, TType.MAP, 'success', (TType.STRING, 'UTF8', TType.I32, None, False), None, ),  # 0
+)
+
+
+class getWordCloud_args(object):
+
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('getWordCloud_args')
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(getWordCloud_args)
+getWordCloud_args.thrift_spec = (
+)
+
+
+class getWordCloud_result(object):
+    """
+    Attributes:
+     - success
+
+    """
+
+
+    def __init__(self, success=None,):
+        self.success = success
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 0:
+                if ftype == TType.MAP:
+                    self.success = {}
+                    (_ktype54, _vtype55, _size53) = iprot.readMapBegin()
+                    for _i57 in range(_size53):
+                        _key58 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val59 = iprot.readDouble()
+                        self.success[_key58] = _val59
+                    iprot.readMapEnd()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('getWordCloud_result')
+        if self.success is not None:
+            oprot.writeFieldBegin('success', TType.MAP, 0)
+            oprot.writeMapBegin(TType.STRING, TType.DOUBLE, len(self.success))
+            for kiter60, viter61 in self.success.items():
+                oprot.writeString(kiter60.encode('utf-8') if sys.version_info[0] == 2 else kiter60)
+                oprot.writeDouble(viter61)
+            oprot.writeMapEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+all_structs.append(getWordCloud_result)
+getWordCloud_result.thrift_spec = (
+    (0, TType.MAP, 'success', (TType.STRING, 'UTF8', TType.DOUBLE, None, False), None, ),  # 0
 )
 fix_spec(all_structs)
 del all_structs
