@@ -2,11 +2,12 @@ import datetime
 
 import pymongo
 
-from bilibili.spider.biliob_fans_spider import get_up_info, get_fans_num, get_top50_up_info, get_subarea_heat
+from bilibili.spider.biliob_fans_spider import get_up_info, get_fans_num, get_top50_up_info, get_subarea_heat, \
+    get_tags_and_weight
 
 user = "root"
 pwd = "root"
-host = "192.168.1.105"
+host = "192.168.2.108"
 port = "27017"
 client = pymongo.MongoClient('mongodb://{}:{}@{}:{}/'.format(user, pwd, host, port))
 bilibiliData = client["bilibili"]
@@ -72,6 +73,8 @@ def getSubAreaInfo():
             subAreaHeat.insert_one({"name": key, "heat": data[key]})
 
 
-# if __name__ == "__main__":
-#     getUpInfo()
-#     getSubAreaInfo()
+if __name__ == "__main__":
+    getUpInfo()
+    getSubAreaInfo()
+    # 设置词云输入文件的位置
+    get_tags_and_weight("F:\workspace\ideaprojects\wordcloud\input\wc\input.txt")
