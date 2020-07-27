@@ -29,7 +29,17 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;}
 
-
+	.container-top ul{
+		padding: 0%;
+	}
+	.container-top ul li{
+		
+		
+		padding-left: 20%;
+		padding-right: 20%;
+		text-align:center;
+		display: inline;
+	}
 
 body {
 	line-height: 1;

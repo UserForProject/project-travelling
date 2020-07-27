@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  
+    <script src="assets/js/echarts.js"></script>
+</head>
+<body>
+    <div id="main" style="width: 1000px;height:800px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+      
+var labelSetting = {
+    normal: {
+        show: true,
+        position: 'right',
+        offset: [10, 0],
+        textStyle: {
+            fontSize: 16
+        }
+    }
+};
+var maxData=200000
+var option = {
+    //  title: {
+    //     text: '中国苹果汁出口贸易数据'
+    // },
+    dataset: {
+        source: [
+            ['score', 'amount', 'product'],
+            [89.3, 58212, 'Matcha Latte'],
+            [57.1, 78254, 'Milk Tea'],
+            [74.4, 41032, 'Cheese Cocoa'],
+            [50.1, 12755, 'Cheese Brownie'],
+            [89.7, 20145, 'Matcha Cocoa'],
+            [68.1, 79146, 'Tea'],
+            [19.6, 91852, 'Orange Juice'],
+            [10.6, 101852, 'Lemon Juice'],
+            [32.7, 20112, 'Walnut Brownie']
+        ]
+    },
+    grid: {containLabel: true},
+    xAxis: {name: 'amount',splitLine: {show: false},axisLine: {show: false},axisTick: {show: false}, axisLabel: {show: false},},
+    yAxis: {type: 'category',axisTick: {show: false},
+        axisLine: {show: false},
+        axisLabel: {
+            margin: 5,
+            textStyle: {
+                color: '#999',
+                fontSize: 16                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+            }
+        }},
+ 
+    series: [
+        {
+            type: 'pictorialBar',
+            label: labelSetting,
+            symbol: 'rect',
+            itemStyle: {
+            
+            normal: {
+                color: '#007eb1',
+                
+            }
+        },
+            encode: {
+                // Map the "amount" column to X axis.
+                x: 'amount',
+                // Map the "product" column to Y axis
+                y: 'product'
+            },
+            z:10
+            
+        },
+        {
+        // full data
+        type: 'pictorialBar',
+        itemStyle: {
+            
+            normal: {
+                color: '#7dbad2',
+                opacity: 0.2
+            }
+        },
+       /* symbolRepeat: 'fixed',*/
+/*        symbolMargin: '5%',
+*/      symbol: 'rect',
+/*        symbolSize: 30,*/
+        symbolBoundingData: maxData,
+        encode: {
+                // Map the "amount" column to X axis.
+                x: 'amount',
+                // Map the "product" column to Y axis
+                y: 'product'
+            },
+        z: 5
+    }
+    ]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+</body>
+</html>
