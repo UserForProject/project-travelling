@@ -1,17 +1,16 @@
 <!DOCTYPE HTML>
 
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title>搜索Up</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<link href="assets/css/templatemo-style.css" rel="stylesheet">
+	<link href="/assets/css/templatemo-style.css" rel="stylesheet">
 	<link rel="stylesheet" href="/assets/css/main.css" />
 	<noscript>
 		<link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
 	<script src="/assets/js/echarts.common.js"></script>
-
 
 
 </head>
@@ -52,7 +51,7 @@
 <!--						<i class="glyphicon glyphicon-search"></i>-->
 <!--					</span>-->
 					<form action="">
-						<input type="text" id="uid" name="uid"/>
+						<input type="text" id="uid" name="uid" placeholder="请输入Up主的uid"/>
 						<input type="button" value="submit">
 					</form>
 
@@ -74,7 +73,7 @@
 			</section> -->
 			<section class="wrapper style5">
 			
-				<div class="templatemo-content-container">
+				<div class="templatemo-content-container"  th:fragment="commoninfo" id="commoninfo">
 
 					<div class="templatemo-flex-row flex-content-row">
 						<div class="col-1">
@@ -84,7 +83,7 @@
 
 									<div class="media-body">
 										<h2 class="media-heading text-uppercase">Up信息</h2>
-										<p>woxiadade</p>
+										<p th:text="${name}"></p>
 									</div>
 								</div>
 							</div>
@@ -98,8 +97,8 @@
 										</a>
 									</div>
 									<div class="media-body">
-										<h2 class="media-heading text-uppercase">Up最新数据</h2>
-										<p>wosuibiandade</p>
+										<h2 class="media-heading text-uppercase">Up等级</h2>
+										<p th:text="${level}">5</p>
 									</div>
 								</div>
 							</div>
@@ -112,31 +111,30 @@
 									<h2 class="text-uppercase">User Table</h2>
 								</div>
 								<div class="table-responsive">
-									<table class="table table-striped table-bordered">
+									<table class="table table-striped table-bordered" >
 										<thead>
 											<tr>
 												<td>粉丝总数</td>
-												<td>111</td>
-												
+												<td th:text="${follower}"></td>
+
 											</tr>
 										</thead>
 										<tbody>
 											<tr>
 												<td>播放总数</td>
-												<td>222</td>
-												
+												<td th:text="${playAmount}"></td>
 											</tr>
 											<tr>
 												<td>点赞总数</td>
-												<td>333</td>
-												
+												<td th:text="${likes}"></td>
+
 											</tr>
 											<tr>
 												<td>专栏阅读</td>
-												<td>444</td>
-												
+												<td th:text="${readingAmount}"></td>
+
 											</tr>
-											
+
 										</tbody>
 									</table>
 								</div>
@@ -149,19 +147,19 @@
 						<div class="templatemo-content-widget white-bg col-1 text-center">
 						  <i class="fa fa-times"></i>
 						  <h2 class="text-uppercase">Top1</h2>
-						  <p class="text-uppercase margin-bottom-10">播放量</p>
+						  <p class="text-uppercase margin-bottom-10" th:text="${video_one}">null</p>
 						  <img src="/images/jpg" alt="Bicycle" class="img-circle img-thumbnail">
 						</div>
 						<div class="templatemo-content-widget white-bg col-1 text-center">
 							<i class="fa fa-times"></i>
 							<h2 class="text-uppercase">Top2</h2>
-							<p class="text-uppercase margin-bottom-10">播放量</p>
+							<p class="text-uppercase margin-bottom-10" th:text="${video_two}">null</p>
 							<img src="/images/jpg" alt="Bicycle" class="img-circle img-thumbnail">
 						  </div>
 						  <div class="templatemo-content-widget white-bg col-1 text-center">
 							<i class="fa fa-times"></i>
 							<h2 class="text-uppercase">Top3</h2>
-							<p class="text-uppercase margin-bottom-10">播放量</p>
+							<p class="text-uppercase margin-bottom-10" th:text="${video_three}">null</p>
 							<img src="/images/jpg" alt="Bicycle" class="img-circle img-thumbnail">
 						  </div>
 					  </div>
@@ -218,40 +216,44 @@
 
 							$(function(){
 								$("#uid").blur(function() {
+									var uidnum=$("input[name='uid']").val();
 
-									//由于信息抓取速度较慢，请耐心等待直到页面显示 get it! 后再对页面进行其他操作
+									//由于信息抓取速度较慢，请耐心等待直到页面显示 get it! 后再对页面进行其他操作！！！
 									$.ajax({
 										type:"POST",
 										url:"/info/getUpInfo",
-										data:{uid:$("input[name='uid']").val()},
+										data:{uid:uidnum},
 										dataType: 'json',
 										success:function(result){
-
 											var fans = [];
 											for(var key in result){
-												if(key=="fansData"){
-													alert("get it!")
-													for(var i in result[key]){
-														fans.push(i)
-														alert(i)
+												if(key=="fansData"){  //通过遍历寻找Json中的fansdata
+													if(result[key].length==0) //若数据集为空，则表明该up主粉丝数没有进入前600名
+														alert("His/Her fans are not enough to show,please change another gay!")
+													else{  //若数据集不为空，则正常注入数据
+														alert("get it!")
+
+														myChart.setOption({
+
+															series: [{
+																data: result[key]
+															}]
+														});
+
+
 													}
 												}
-												fans.push(result[key]);
-
 											}
-
-											myChart.setOption({
-
-												series: [{
-													data: fans
-												}]
-											});
+											var uri = "/info/getupcommoninfo";
+											$("#commoninfo").load(uri,{uid:uidnum});
+											alert("name get")
 										},
 										error:function(){
 											alert("data error");
 										}
 
 									});
+
 								});
 							});
 						</script>
@@ -279,12 +281,6 @@
 	</div>
 
 	<!-- Scripts -->
-	<script src="/assets/js/jquery.min.js"></script>
-	<script type="text/javascript">
-
-
-	</script>
-
 	<script src="/assets/js/jquery.scrollex.min.js"></script>
 	<script src="/assets/js/jquery.scrolly.min.js"></script>
 	<script src="/assets/js/browser.min.js"></script>
