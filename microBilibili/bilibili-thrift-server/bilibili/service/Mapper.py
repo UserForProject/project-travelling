@@ -9,7 +9,7 @@ from bilibili.spider.biliob_fans_spider import get_detailed_info
 
 user = "root"
 pwd = "root"
-host = "192.168.1.105"
+host = "192.168.2.108"
 port = "27017"
 
 # 运行前先运行update包中的updateBeforeMR脚本
@@ -111,9 +111,14 @@ class Mapper:
         """
         返回当日热度最高的前300个词
         """
-        pass
+        wordCloud = list(self.bilibiliData["wordCloud"].find({}, {"_id": 0}).sort([("heat", -1)]).limit(300))
+        res = {}
+        for item in wordCloud:
+            # 强制转换防止返回时出现类型错误
+            res[item["word"]] = float(item["heat"])
+        return res
 
 
-# if __name__ == "__main__":
-#     m = Mapper()
-#     m.getSubareaPlayAmount()
+if __name__ == "__main__":
+    m = Mapper()
+    print(m.getWordCloud())
