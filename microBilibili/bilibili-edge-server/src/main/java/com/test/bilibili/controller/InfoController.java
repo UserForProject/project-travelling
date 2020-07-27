@@ -7,10 +7,16 @@ import com.test.thrift.bilibili.UserInfo;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TSocket;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller     // 声明为一个 Controller
 @RequestMapping("/info")        // 声明借助浏览器访问该 Controller 的 url Path
@@ -46,7 +52,7 @@ public class InfoController {
 
     }
 
-    //返回up主的具体信息
+    //返回up主的具体信息，并返回Json对象
     @RequestMapping(value="/getUpInfo")
     @ResponseBody
     public UserDetailedInfo getUpInfo(@RequestParam(value = "uid") String uid){
@@ -54,6 +60,58 @@ public class InfoController {
         UserDetailedInfo upinfo = this.getupinfo(id);
         return upinfo;
     }
+
+    //查找up主信息
+    @RequestMapping({"/getupcommoninfo"})
+    public String getupname(Model model,@RequestParam(value = "uid") String uid){
+        int id = Integer.parseInt(uid);
+        UserDetailedInfo upinfo = this.getupinfo(id);
+        String name = upinfo.name;
+        int playAmount = upinfo.playAmount;
+        int follower = upinfo.follower;
+        int likes = upinfo.likes;
+        int readingAmount = upinfo.readingAmount;
+        int level = upinfo.level;
+        List<Map<String, String>> videos = upinfo.videos;
+        String video_one = videos.get(0).get("video_title");
+        String video_two = videos.get(1).get("video_title");
+        String video_three = videos.get(2).get("video_title");
+        model.addAttribute("name",name);
+        model.addAttribute("playAmount",playAmount);
+        model.addAttribute("follower",follower);
+        model.addAttribute("likes",likes);
+        model.addAttribute("readingAmount",readingAmount);
+        model.addAttribute("level",level);
+        model.addAttribute("video_one",video_one);
+        model.addAttribute("video_two",video_two);
+        model.addAttribute("video_three",video_three);
+        return "elements::commoninfo";
+    }
+    //掉粉榜数据
+    @RequestMapping({"/getRepair"})
+    public String getRepair(Model model) {
+        List<UserInfo> repairs = this.getTopDecreasingUp();
+        List<String> lists = new ArrayList<>(8);
+        for(int i=0;i<8;i++){
+            lists.add(repairs.get(i).name);
+        }
+        model.addAttribute("repairs",lists);
+        return "generic::recording";
+    }
+
+    //
+
+
+//    @RequestMapping("/ajaxTest")
+//    public String test(Model model){
+//        System.out.println("ajaxTest");
+//        List<String> list = new ArrayList<>(10);
+//        for(int i=0;i<1;i++){
+//            list.add("hello"+i);
+//        }
+//        model.addAttribute("aa",list);
+//        return "generic::div1";
+//    }
 
     //
     //返回抓取信息的函数
