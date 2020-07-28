@@ -79,21 +79,34 @@ public class InfoController {
         int id = Integer.parseInt(uid);
         UserDetailedInfo upinfo = this.getupinfo(id);
         String name = upinfo.name;
-        int playAmount = upinfo.playAmount;
-        int follower = upinfo.follower;
-        int likes = upinfo.likes;
+        int playAmount = upinfo.playAmount/10000;
+        String playAmounts = String.valueOf(playAmount)+"万";
+        int follower = upinfo.follower/10000;
+        String followers = String.valueOf(follower)+"万";
+        int like = upinfo.likes/10000;
+        String likes = String.valueOf(like)+"万";
         int readingAmount = upinfo.readingAmount;
+        String readingAmounts;
+        if(readingAmount==0){
+            readingAmounts = "该up主暂时没有写过专栏阅读哦~";
+        }else if(readingAmount>10000){
+            readingAmount = readingAmount/10000;
+            readingAmounts = String.valueOf(readingAmount)+"万";
+        }else{
+            readingAmounts = String.valueOf(readingAmount);
+        }
         int level = upinfo.level;
+        String levels = String.valueOf(level)+"级";
         List<Map<String, String>> videos = upinfo.videos;
         String video_one = videos.get(0).get("video_title");
         String video_two = videos.get(1).get("video_title");
         String video_three = videos.get(2).get("video_title");
         model.addAttribute("name",name);
-        model.addAttribute("playAmount",playAmount);
-        model.addAttribute("follower",follower);
+        model.addAttribute("playAmount",playAmounts);
+        model.addAttribute("follower",followers);
         model.addAttribute("likes",likes);
-        model.addAttribute("readingAmount",readingAmount);
-        model.addAttribute("level",level);
+        model.addAttribute("readingAmount",readingAmounts);
+        model.addAttribute("level",levels);
         model.addAttribute("video_one",video_one);
         model.addAttribute("video_two",video_two);
         model.addAttribute("video_three",video_three);

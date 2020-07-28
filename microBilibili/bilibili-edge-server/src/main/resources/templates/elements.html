@@ -13,6 +13,7 @@
 	<script src="/assets/js/echarts.common.js"></script>
 
 
+
 </head>
 
 <body class="is-preload">
@@ -82,7 +83,7 @@
 								<div class="media">
 
 									<div class="media-body">
-										<h2 class="media-heading text-uppercase">Up信息</h2>
+										<h2 class="media-heading text-uppercase">Up昵称</h2>
 										<p th:text="${name}"></p>
 									</div>
 								</div>
@@ -98,7 +99,7 @@
 									</div>
 									<div class="media-body">
 										<h2 class="media-heading text-uppercase">Up等级</h2>
-										<p th:text="${level}">5</p>
+										<p th:text="${level}"></p>
 									</div>
 								</div>
 							</div>
@@ -108,7 +109,7 @@
 								class="panel panel-default templatemo-content-widget white-bg no-padding templatemo-overflow-hidden">
 								<i class="fa fa-times"></i>
 								<div class="panel-heading templatemo-position-relative">
-									<h2 class="text-uppercase">User Table</h2>
+									<h2 class="text-uppercase">点击量信息</h2>
 								</div>
 								<div class="table-responsive">
 									<table class="table table-striped table-bordered" >
@@ -174,6 +175,7 @@
 							// 基于准备好的dom，初始化echarts实例
 							var myChart = echarts.init(document.getElementById('main3'));
 
+							myChart.showLoading({text : '请输入uid'});
 							option = {
 								title: {
 									text: '数量（万）'
@@ -217,15 +219,17 @@
 							$(function(){
 								$("#uid").blur(function() {
 									var uidnum=$("input[name='uid']").val();
-
+									myChart.showLoading({text : '正在加载...'});
 									//由于信息抓取速度较慢，请耐心等待直到页面显示 get it! 后再对页面进行其他操作！！！
 									$.ajax({
 										type:"POST",
 										url:"/info/getUpInfo",
 										data:{uid:uidnum},
 										dataType: 'json',
+										async:true,
 										success:function(result){
 											var fans = [];
+											myChart.hideLoading();
 											for(var key in result){
 												if(key=="fansData"){  //通过遍历寻找Json中的fansdata
 													if(result[key].length==0) //若数据集为空，则表明该up主粉丝数没有进入前600名
@@ -244,15 +248,17 @@
 													}
 												}
 											}
-											var uri = "/info/getupcommoninfo";
-											$("#commoninfo").load(uri,{uid:uidnum});
-											alert("name get")
+											// var uri = "/info/getupcommoninfo";
+											// $("#commoninfo").load(uri,{uid:uidnum});
+											// alert("name get")
 										},
 										error:function(){
 											alert("data error");
-										}
+										},
 
 									});
+									var uri = "/info/getupcommoninfo";
+									$("#commoninfo").load(uri,{uid:uidnum});
 
 								});
 							});
