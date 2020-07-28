@@ -88,7 +88,7 @@ public class InfoController {
         int readingAmount = upinfo.readingAmount;
         String readingAmounts;
         if(readingAmount==0){
-            readingAmounts = "该up主暂时没有写过专栏阅读哦~";
+            readingAmounts = name+" 暂时没有写过专栏阅读哦~";
         }else if(readingAmount>10000){
             readingAmount = readingAmount/10000;
             readingAmounts = String.valueOf(readingAmount)+"万";
