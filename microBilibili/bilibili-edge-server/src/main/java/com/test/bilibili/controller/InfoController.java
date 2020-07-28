@@ -76,15 +76,21 @@ public class InfoController {
     //查找up主信息--search功能
     @RequestMapping({"/getupcommoninfo"})
     public String getupname(Model model,@RequestParam(value = "uid") String uid){
+        //up uid
         int id = Integer.parseInt(uid);
         UserDetailedInfo upinfo = this.getupinfo(id);
+        //up 昵称
         String name = upinfo.name;
+        //up 视频播放量
         int playAmount = upinfo.playAmount/10000;
         String playAmounts = String.valueOf(playAmount)+"万";
+        //up 粉丝数 （为方便阅读，显示xxx万）
         int follower = upinfo.follower/10000;
         String followers = String.valueOf(follower)+"万";
+        //up 点赞数 （为方便阅读，显示xxx万）
         int like = upinfo.likes/10000;
         String likes = String.valueOf(like)+"万";
+        //up 阅读专栏阅读量 （为方便阅读，显示xxx万，若阅读量为0，则表明该up主没有写过阅读专栏）
         int readingAmount = upinfo.readingAmount;
         String readingAmounts;
         if(readingAmount==0){
@@ -95,21 +101,34 @@ public class InfoController {
         }else{
             readingAmounts = String.valueOf(readingAmount);
         }
+        //up 等级
         int level = upinfo.level;
         String levels = String.valueOf(level)+"级";
+        //up 头像
+        String face = upinfo.face;
+        // 三个热门视频的标题
         List<Map<String, String>> videos = upinfo.videos;
         String video_one = videos.get(0).get("video_title");
         String video_two = videos.get(1).get("video_title");
         String video_three = videos.get(2).get("video_title");
+        // 三个热门视频的视频封面
+        String cover_one = videos.get(0).get("video_cover");
+        String cover_two = videos.get(1).get("video_cover");
+        String cover_three = videos.get(2).get("video_cover");
+
         model.addAttribute("name",name);
         model.addAttribute("playAmount",playAmounts);
         model.addAttribute("follower",followers);
         model.addAttribute("likes",likes);
         model.addAttribute("readingAmount",readingAmounts);
         model.addAttribute("level",levels);
+        model.addAttribute("face",face);
         model.addAttribute("video_one",video_one);
         model.addAttribute("video_two",video_two);
         model.addAttribute("video_three",video_three);
+        model.addAttribute("cover_one",cover_one);
+        model.addAttribute("cover_two",cover_two);
+        model.addAttribute("cover_three",cover_three);
         return "elements::commoninfo";
     }
     //掉粉榜数据
