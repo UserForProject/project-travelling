@@ -8,13 +8,9 @@ import org.apache.thrift.TException;
 import org.apache.thrift.transport.TSocket;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,13 +51,29 @@ public class InfoController {
     //返回up主的具体信息，并返回Json对象
     @RequestMapping(value="/getUpInfo")
     @ResponseBody
-    public UserDetailedInfo getUpInfo(@RequestParam(value = "uid") String uid){
+    public UserDetailedInfo getUpInfo(@RequestParam(value = "uid") String uid){   //Uid 为从前端输入框通过ajax post请求传过来的参数
         int id = Integer.parseInt(uid);
         UserDetailedInfo upinfo = this.getupinfo(id);
         return upinfo;
     }
 
-    //查找up主信息
+    //返回经mapreduce后的信息--当日热度最高的前300个词
+    @RequestMapping(value = "/getWordCloud")
+    @ResponseBody
+    public Map<String, Double> getWordCloud(){
+        Map<String, Double> wordcloud = this.wordcloud();
+        return wordcloud;
+    }
+
+    //返回当日各分区热度字典
+    @RequestMapping(value = "/getSubareaPlayAmount")
+    @ResponseBody
+    public Map<String, Integer> getSubareaPlayAmount(){
+        Map<String, Integer> subareaplayamount = this.subareaplayamount();
+        return subareaplayamount;
+    }
+
+    //查找up主信息--search功能
     @RequestMapping({"/getupcommoninfo"})
     public String getupname(Model model,@RequestParam(value = "uid") String uid){
         int id = Integer.parseInt(uid);
@@ -88,30 +100,21 @@ public class InfoController {
         return "elements::commoninfo";
     }
     //掉粉榜数据
-    @RequestMapping({"/getRepair"})
-    public String getRepair(Model model) {
-        List<UserInfo> repairs = this.getTopDecreasingUp();
-        List<String> lists = new ArrayList<>(8);
-        for(int i=0;i<8;i++){
-            lists.add(repairs.get(i).name);
-        }
-        model.addAttribute("repairs",lists);
-        return "generic::recording";
-    }
-
-    //
-
-
-//    @RequestMapping("/ajaxTest")
-//    public String test(Model model){
-//        System.out.println("ajaxTest");
-//        List<String> list = new ArrayList<>(10);
-//        for(int i=0;i<1;i++){
-//            list.add("hello"+i);
+//    @RequestMapping({"/getRepair"})
+//    public String getRepair(Model model) {
+//        List<UserInfo> repairs = this.getTopDecreasingUp();
+//        List<String> lists = new ArrayList<>(8);
+//        for(int i=0;i<8;i++){
+//            lists.add(repairs.get(i).name);
 //        }
-//        model.addAttribute("aa",list);
-//        return "generic::div1";
+//        model.addAttribute("repairs",lists);
+//        return "generic::recording";
 //    }
+
+
+
+
+
 
     //
     //返回抓取信息的函数
@@ -182,6 +185,39 @@ public class InfoController {
         //查询一次后关闭网络连接
         socket.close();
         return upinfo;
+    }
+
+    private Map<String, Double> wordcloud(){
+        //利用ServiceProvider里的makesocket()函数来连接 ServerSocket
+        TSocket socket = serviceProvider.makesocket();
+        BilibiliService.Iface bilibiliService = serviceProvider.getBilibiliService(socket);
+        Map<String, Double> cloud = null;
+        try {
+            cloud = bilibiliService.getWordCloud();
+
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+        //查询一次后关闭网络连接
+        socket.close();
+        return cloud;
+    }
+
+
+    private Map<String, Integer> subareaplayamount(){
+        //利用ServiceProvider里的makesocket()函数来连接 ServerSocket
+        TSocket socket = serviceProvider.makesocket();
+        BilibiliService.Iface bilibiliService = serviceProvider.getBilibiliService(socket);
+        Map<String, Integer> subareaplayamount = null;
+        try {
+            subareaplayamount = bilibiliService.getSubareaPlayAmount();
+
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+        //查询一次后关闭网络连接
+        socket.close();
+        return subareaplayamount;
     }
 
 
