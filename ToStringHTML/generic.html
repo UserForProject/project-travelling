@@ -8,9 +8,10 @@
 	<link rel="stylesheet" href="assets/css/main.css" />
 	<noscript>
 		<link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/bootstrap.js"></script>
-		
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/bootstrap.js"></script>
+	<script src="assets/js/echarts.js"></script>
+
 </head>
 
 <body class="is-preload">
@@ -40,155 +41,403 @@
 
 		<!-- Main -->
 		<article id="main">
-			<section id = "banner">
+			<section id="banner">
 				<div class="inner">
-				<h2>排行榜</h2>
-				<p>ranking list</p>
-			<a href="#ranking" class="more scrolly">Learn More</a>
+					<h2>排行榜</h2>
+					<p>ranking list</p>
+					<a href="#ranking" class="more scrolly">Learn More</a>
 				</div>
 			</section>
 
-			
+
 			<div id="ranking">
 				<div class="container-top" id="list">
 					<ul>
-						<li><a href="#firstrank">粉丝变化榜</a></li>
-						<li><a href="#secondrank">粉丝总数榜</a></li>
+						<li><a href="#firstrank">粉丝涨粉榜</a></li>
+						<li><a href="#secondrank">粉丝掉粉榜</a></li>
+						<li><a href="#thridrank">粉丝总数榜</a></li>
 					</ul>
 				</div>
 				<div class="container-bottom" id="item">
 					<div class="con" id="firstrank">
-						<div style="height: 800px;">
-							<div class="wrapper style5" style="width: 50%;height: 800px; float: left;">
-								
-								<div class="inner" style="width: 50%;">
-									<h3>涨粉榜</h3>
-									<ul class="list-group" >
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">1</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">2</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">3</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">4</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">5</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">6</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">7</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">8</span></li>
-									</ul>
-				
+						<div style="height: 1000px;">
+							<div class="wrapper style5" id="rankingrise"
+								style="width: 100%;height: 1000px;margin-bottom: 5px; float: left;background:url('assets/css/images/bili1.jpg');cursor:pointer;border:no; opacity: 100%; background-size: cover;">
+
+								<div class="inner" id="rise" style="height: 800px;
+								width:80%;height:800px;border:no; background-size: cover;">
 								</div>
-								<div class="inner" style="width: 50%;">
-									<h3>掉分榜</h3>
-									<ul class="list-group" >
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">1</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">2</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">3</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">4</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">5</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">6</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">7</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">8</span></li>
-									</ul>
-								</div>
-								
+								<script type="text/javascript">
+									// 基于准备好的dom，初始化echarts实例
+									var myChart = echarts.init(document.getElementById('rise'));
+									option = {
+										title: {
+											text: "涨粉排行榜"
+										},
+										//color: ['#3398DB'],
+										tooltip: {
+											trigger: 'axis',
+											backgroundColor: 'rgba(255,255,255,0.8)',
+											extraCssText: 'box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);',
+											textStyle: {
+												color: '#6a717b',
+											},
+
+										},
+										grid: {
+											left: '2%',
+											right: '3%',
+											bottom: '0%',
+											containLabel: true
+										},
+										yAxis: [{
+											type: 'category',
+											data: ['up1', 'up2', 'up3', 'up4', 'up5', 'up6', 'up7', 'up8', 'up9', 'up10'],
+											inverse: true,
+											axisTick: {
+												alignWithLabel: true,
+
+
+											},
+											axisLabel: {
+												margin: 10,
+												textStyle: {
+													fontSize: 18,
+													color: 'purple'
+												}
+											},
+											axisLine: {
+												show: false
+											},
+
+										}],
+										xAxis: [{
+											type: 'value',
+											axisLabel: {
+												show: false
+											},
+											axisLine: {
+												show: false
+											},
+											splitLine: {
+												show: false
+											}
+
+
+
+										}],
+										//backgroundColor: '#192469',
+										series: [{
+
+											name: '粉丝Top',
+											type: 'bar',
+											barWidth: 26,
+											data: [8827896, 7472072, 7433391, 7137253, 6382192, 5268842, 4827026, 3935701, 3875562,
+												3839609
+											],
+											label: {
+												normal: {
+													show: true,
+													position: 'insideRight',
+													textStyle: {
+														color: 'white' //color of value
+													}
+												}
+											},
+
+
+											itemStyle: {
+
+												normal: {
+													color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+														offset: 0,
+														color: '#AAAAFF' // 0% 处的颜色
+													}, {
+														offset: 1,
+														color: '#08e3f1' // 100% 处的颜色
+													}], false),
+													barBorderRadius: [0, 15, 15, 0],
+													shadowColor: 'rgba(0,0,0,0.1)',
+													shadowBlur: 3,
+													shadowOffsetY: 3
+												}
+											}
+										}]
+									};
+									myChart.setOption(option);
+								</script>
+
+
 							</div>
-							<div class="wrapper style5" id="ranking"  style="width: 50%;height: 800px; float: right;">
-								
-								<div class="inner" style="width: 50%;">
-									<h3>粉丝总榜</h3>
-									<ul class="list-group" >
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">1</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">2</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">3</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">4</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">5</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">6</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">7</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">8</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">9</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">10</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">11</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">12</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">13</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">14</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">15</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">16</span></li>
-									</ul>
-								</div>
-								
-							</div>
+
 						</div>
 					</div>
+
 					<div class="con" id="secondrank">
-						<div style="height: 800px;">
-							<div class="wrapper style5" id="ranking"  style="width: 50%;height: 800px; float: left;">
-								
-								<div class="inner" style="width: 50%;">
-									<h3>涨粉榜</h3>
-									<ul class="list-group" >
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">1</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">2</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">3</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">4</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">5</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">6</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">7</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">8</span></li>
-									</ul>
-				
+						<div style="height: 1000px;">
+							<div class="wrapper style5" id="rankingloss"
+								style="width: 100%;height: 1000px;margin-bottom: 5px; float: left;background:url('assets/css/images/bili4.jpg');cursor:pointer;border:no; opacity: 100%; background-size: cover;">
+
+								<div class="inner" id="loss" style="height: 800px;
+								width:80%;height:800px;border:no; background-size: cover;">
 								</div>
-								<div class="inner" style="width: 50%;">
-									<h3>掉分榜</h3>
-									<ul class="list-group" >
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">1</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">2</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">3</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">4</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">5</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">6</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">7</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">8</span></li>
-									</ul>
-								</div>
-								
+								<script type="text/javascript">
+									// 基于准备好的dom，初始化echarts实例
+									var myChart = echarts.init(document.getElementById('loss'));
+									option = {
+										title: {
+											text: "掉粉排行榜"
+										},
+										//color: ['#3398DB'],
+										tooltip: {
+											trigger: 'axis',
+											backgroundColor: 'rgba(255,255,255,0.8)',
+											extraCssText: 'box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);',
+											textStyle: {
+												color: '#6a717b',
+											},
+
+										},
+										grid: {
+											left: '2%',
+											right: '3%',
+											bottom: '0%',
+											containLabel: true
+										},
+										yAxis: [{
+											type: 'category',
+											data: ['up1', 'up2', 'up3', 'up4', 'up5', 'up6', 'up7', 'up8', 'up9', 'up10'],
+											inverse: true,
+											axisTick: {
+												alignWithLabel: true,
+
+
+											},
+											axisLabel: {
+												margin: 10,
+												textStyle: {
+													fontSize: 18,
+													color: 'purple'
+												}
+											},
+											axisLine: {
+												show: false
+											},
+
+										}],
+										xAxis: [{
+											type: 'value',
+											axisLabel: {
+												show: false
+											},
+											axisLine: {
+												show: false
+											},
+											splitLine: {
+												show: false
+											}
+
+
+
+										}],
+										//backgroundColor: '#192469',
+										series: [{
+
+											name: '粉丝Top',
+											type: 'bar',
+											barWidth: 26,
+											data: [8827896, 7472072, 7433391, 7137253, 6382192, 5268842, 4827026, 3935701, 3875562,
+												3839609
+											],
+											label: {
+												normal: {
+													show: true,
+													position: 'insideRight',
+													textStyle: {
+														color: 'white' //color of value
+													}
+												}
+											},
+
+
+											itemStyle: {
+
+												normal: {
+													color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+														offset: 0,
+														color: '#FF95CA' // 0% 处的颜色
+													}, {
+														offset: 1,
+														color: '#08e3f1' // 100% 处的颜色
+													}], false),
+													barBorderRadius: [0, 15, 15, 0],
+													shadowColor: 'rgba(0,0,0,0.1)',
+													shadowBlur: 3,
+													shadowOffsetY: 3
+												}
+											}
+										}]
+									};
+									myChart.setOption(option);
+								</script>
+
+
 							</div>
-							<div class="wrapper style5" id="ranking"  style="width: 50%;height: 800px; float: right;">
-								
-								<div class="inner" style="width: 50%;">
-									<h3>粉丝总榜</h3>
-									<ul class="list-group" >
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">1</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">2</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">3</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">4</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">5</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">6</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">7</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">8</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightcoral;">9</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightgreen;">10</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightsalmon;">11</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:pink;">12</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightblue;">13</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:red;background:lightgray;">14</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightseagreen;">15</span></li>
-										<li class="list-group-item">Name：<span class="badge" style="color:green;background:lightsalmon;">16</span></li>
-									</ul>
+
+						</div>
+						
+					</div>
+
+					<div class="con" id="thridrank">
+						<div style="height: 1000px;">
+							<div class="wrapper style5" id="rankingall"
+								style="width: 100%;height: 1000px; float: left;background:url('assets/css/images/bili2.jpg');cursor:pointer;border:no; opacity: 100%; background-size: cover;">
+
+								<div class="inner" id="all" style="height: 800px;
+								width:80%;height:800px;border:no; background-size: cover;">
 								</div>
-								
+								<script type="text/javascript">
+									// 基于准备好的dom，初始化echarts实例
+									var myChart = echarts.init(document.getElementById('all'));
+									option = {
+										title: {
+											text: "涨粉排行榜"
+										},
+										//color: ['#3398DB'],
+										tooltip: {
+											trigger: 'axis',
+											backgroundColor: 'rgba(255,255,255,0.8)',
+											extraCssText: 'box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);',
+											textStyle: {
+												color: '#6a717b',
+											},
+
+										},
+										grid: {
+											left: '2%',
+											right: '3%',
+											bottom: '0%',
+											containLabel: true
+										},
+										yAxis: [{
+											type: 'category',
+											data: [
+												'up1', 'up2', 'up3', 'up4', 'up5', 'up6', 'up7', 'up8', 'up9', 'up10',
+												'up1', 'up2', 'up3', 'up4', 'up5', 'up6', 'up7', 'up8', 'up9', 'up10',
+												'up1', 'up2', 'up3', 'up4', 'up5', 'up6', 'up7', 'up8', 'up9', 'up10',
+												'up1', 'up2', 'up3', 'up4', 'up5', 'up6', 'up7', 'up8', 'up9', 'up10',
+												'up1', 'up2', 'up3', 'up4', 'up5', 'up6', 'up7', 'up8', 'up9', 'up10'
+											],
+											inverse: true,
+											axisTick: {
+												alignWithLabel: true,
+
+
+											},
+											axisLabel: {
+												margin: 10,
+												textStyle: {
+													fontSize: 18,
+													color: 'purple'
+												}
+											},
+											axisLine: {
+												show: false
+											},
+
+										}],
+										xAxis: [{
+											type: 'value',
+											axisLabel: {
+												show: false
+											},
+											axisLine: {
+												show: false
+											},
+											splitLine: {
+												show: false
+											}
+
+
+
+										}],
+										//backgroundColor: '#192469',
+										series: [{
+
+											name: '粉丝Top',
+											type: 'bar',
+											barWidth: 26,
+											data: [
+												8827896, 7472072, 7433391, 7137253, 6382192, 5268842, 4827026, 3935701, 3875562,
+												3839609,
+												8827896, 7472072, 7433391, 7137253, 6382192, 5268842, 4827026, 3935701, 3875562,
+												3839609,
+												8827896, 7472072, 7433391, 7137253, 6382192, 5268842, 4827026, 3935701, 3875562,
+												3839609,
+												8827896, 7472072, 7433391, 7137253, 6382192, 5268842, 4827026, 3935701, 3875562,
+												3839609,
+												8827896, 7472072, 7433391, 7137253, 6382192, 5268842, 4827026, 3935701, 3875562,
+												3839609,
+											],
+											label: {
+												normal: {
+													show: true,
+													position: 'insideRight',
+													textStyle: {
+														color: 'white' //color of value
+													}
+												}
+											},
+
+
+											itemStyle: {
+
+												normal: {
+													color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+														offset: 0,
+														color: '#0590eb' // 0% 处的颜色
+													}, {
+														offset: 1,
+														color: '#FF9797' // 100% 处的颜色
+													}], false),
+													barBorderRadius: [0, 15, 15, 0],
+													shadowColor: 'rgba(0,0,0,0.1)',
+													shadowBlur: 3,
+													shadowOffsetY: 3
+												}
+											}
+										}],
+										dataZoom: [{
+												type: 'slider',
+												show: true,
+												yAxisIndex: [0],
+												left: '93%',
+												start: 0, //数据窗口范围的起始百分比
+												end: 20
+											},
+											
+										]
+
+									};
+									myChart.setOption(option);
+								</script>
+
+
 							</div>
+
 						</div>
 					</div>
-					
+
 				</div>
-			</div>
-	
 
 
-		
+
+
 		</article>
 
 		<!-- Footer -->
 		<footer id="footer">
-			
+
 			<ul class="copyright">
 				<li> ToString</li>
 			</ul>
