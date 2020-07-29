@@ -30,7 +30,7 @@ public class ServiceProvider {
 
     //  声明一个 Socket 用来连接 ServerSocket
     public TSocket makesocket(){
-        TSocket socket = new TSocket(BilibiliServerIp, BilibiliServerPort, 20000);
+        TSocket socket = new TSocket(BilibiliServerIp, BilibiliServerPort, 100000);
         return socket;
     }
 
