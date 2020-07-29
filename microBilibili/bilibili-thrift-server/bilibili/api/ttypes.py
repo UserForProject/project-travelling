@@ -120,11 +120,13 @@ class UserDetailedInfo(object):
      - videos
      - face
      - fansData
+     - subareaNum
+     - allVideos
 
     """
 
 
-    def __init__(self, name=None, uid=None, level=None, follower=None, follow=None, likes=None, playAmount=None, readingAmount=None, videos=None, face=None, fansData=None,):
+    def __init__(self, name=None, uid=None, level=None, follower=None, follow=None, likes=None, playAmount=None, readingAmount=None, videos=None, face=None, fansData=None, subareaNum=None, allVideos=None,):
         self.name = name
         self.uid = uid
         self.level = level
@@ -136,6 +138,8 @@ class UserDetailedInfo(object):
         self.videos = videos
         self.face = face
         self.fansData = fansData
+        self.subareaNum = subareaNum
+        self.allVideos = allVideos
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -217,6 +221,33 @@ class UserDetailedInfo(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 12:
+                if ftype == TType.MAP:
+                    self.subareaNum = {}
+                    (_ktype20, _vtype21, _size19) = iprot.readMapBegin()
+                    for _i23 in range(_size19):
+                        _key24 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val25 = iprot.readI32()
+                        self.subareaNum[_key24] = _val25
+                    iprot.readMapEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 13:
+                if ftype == TType.LIST:
+                    self.allVideos = []
+                    (_etype29, _size26) = iprot.readListBegin()
+                    for _i30 in range(_size26):
+                        _elem31 = {}
+                        (_ktype33, _vtype34, _size32) = iprot.readMapBegin()
+                        for _i36 in range(_size32):
+                            _key37 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                            _val38 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                            _elem31[_key37] = _val38
+                        iprot.readMapEnd()
+                        self.allVideos.append(_elem31)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -262,11 +293,11 @@ class UserDetailedInfo(object):
         if self.videos is not None:
             oprot.writeFieldBegin('videos', TType.LIST, 9)
             oprot.writeListBegin(TType.MAP, len(self.videos))
-            for iter19 in self.videos:
-                oprot.writeMapBegin(TType.STRING, TType.STRING, len(iter19))
-                for kiter20, viter21 in iter19.items():
-                    oprot.writeString(kiter20.encode('utf-8') if sys.version_info[0] == 2 else kiter20)
-                    oprot.writeString(viter21.encode('utf-8') if sys.version_info[0] == 2 else viter21)
+            for iter39 in self.videos:
+                oprot.writeMapBegin(TType.STRING, TType.STRING, len(iter39))
+                for kiter40, viter41 in iter39.items():
+                    oprot.writeString(kiter40.encode('utf-8') if sys.version_info[0] == 2 else kiter40)
+                    oprot.writeString(viter41.encode('utf-8') if sys.version_info[0] == 2 else viter41)
                 oprot.writeMapEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
@@ -277,8 +308,27 @@ class UserDetailedInfo(object):
         if self.fansData is not None:
             oprot.writeFieldBegin('fansData', TType.LIST, 11)
             oprot.writeListBegin(TType.I32, len(self.fansData))
-            for iter22 in self.fansData:
-                oprot.writeI32(iter22)
+            for iter42 in self.fansData:
+                oprot.writeI32(iter42)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.subareaNum is not None:
+            oprot.writeFieldBegin('subareaNum', TType.MAP, 12)
+            oprot.writeMapBegin(TType.STRING, TType.I32, len(self.subareaNum))
+            for kiter43, viter44 in self.subareaNum.items():
+                oprot.writeString(kiter43.encode('utf-8') if sys.version_info[0] == 2 else kiter43)
+                oprot.writeI32(viter44)
+            oprot.writeMapEnd()
+            oprot.writeFieldEnd()
+        if self.allVideos is not None:
+            oprot.writeFieldBegin('allVideos', TType.LIST, 13)
+            oprot.writeListBegin(TType.MAP, len(self.allVideos))
+            for iter45 in self.allVideos:
+                oprot.writeMapBegin(TType.STRING, TType.STRING, len(iter45))
+                for kiter46, viter47 in iter45.items():
+                    oprot.writeString(kiter46.encode('utf-8') if sys.version_info[0] == 2 else kiter46)
+                    oprot.writeString(viter47.encode('utf-8') if sys.version_info[0] == 2 else viter47)
+                oprot.writeMapEnd()
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -319,6 +369,8 @@ UserDetailedInfo.thrift_spec = (
     (9, TType.LIST, 'videos', (TType.MAP, (TType.STRING, 'UTF8', TType.STRING, 'UTF8', False), False), None, ),  # 9
     (10, TType.STRING, 'face', 'UTF8', None, ),  # 10
     (11, TType.LIST, 'fansData', (TType.I32, None, False), None, ),  # 11
+    (12, TType.MAP, 'subareaNum', (TType.STRING, 'UTF8', TType.I32, None, False), None, ),  # 12
+    (13, TType.LIST, 'allVideos', (TType.MAP, (TType.STRING, 'UTF8', TType.STRING, 'UTF8', False), False), None, ),  # 13
 )
 fix_spec(all_structs)
 del all_structs
