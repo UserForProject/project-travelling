@@ -1,13 +1,17 @@
 import os
+import random
 import time
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 import json
+import re
 import requests
 
 # 定义请求头，将会多次使用
+from bilibili.spider.ip_pool import check_ip, get_all_ip2
+
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36'
 }
@@ -111,7 +115,7 @@ def get_detailed_info(uid):
     chrome_options = Options()
     chrome_options.add_argument('--headless')
     browser = webdriver.Chrome(chrome_options=chrome_options)
-    #browser = webdriver.Chrome()
+    # browser = webdriver.Chrome()
     browser.get(url)
 
     # 定义 dict 作为详细信息的返回值
@@ -155,8 +159,7 @@ def get_detailed_info(uid):
     # 获取最多播放的视频信息
     video_info_list = []
     # 定位并点击最多播放按钮
-    most_popular_videos_element = \
-    browser.find_element_by_css_selector('ul.be-tab-inner.clearfix').find_elements_by_tag_name('li')[1]
+    most_popular_videos_element = browser.find_element_by_css_selector('ul.be-tab-inner.clearfix').find_elements_by_tag_name('li')[1]
     most_popular_videos_element.click()
     time.sleep(0.5)
     video_elements = browser.find_elements_by_css_selector('a.cover')
@@ -172,14 +175,89 @@ def get_detailed_info(uid):
         video_info_list.append(video_info_dict)
     detailed_info_dict['video'] = video_info_list
 
+    # 获取up主分区投稿数量和其投稿的所有视频的bv号
+    # 定义字典存储 分区名称：投稿数量
+    subarea_upload_dict = {}
+    # 定义列表存储其发布的所有视频的bv号
+    video_bv_list = []
+    # 定义列表存储该视频对应的分区
+    video_subarea_list = []
+    tag_elements = browser.find_element_by_id('submit-video-type-filter').find_elements_by_tag_name('a')
+    for i in range(1, len(tag_elements)):
+        # 点击分区标签
+        tag_elements[i].click()
+        # 获取up主分区投稿数量
+        subarea_name = re.split('[0-9]', tag_elements[i].text)[0]
+        upload_num = int(tag_elements[i].text.split(subarea_name)[1])
+        subarea_upload_dict[subarea_name] = upload_num
+        time.sleep(0.5)
+        while True:
+            bvid_elements = browser.find_elements_by_css_selector('li.small-item.fakeDanmu-item')
+            for bvid_element in bvid_elements:
+                bvid = bvid_element.get_attribute('data-aid')
+                video_bv_list.append(bvid)
+                video_subarea_list.append(subarea_name)
+            next_btn = browser.find_element_by_css_selector('li.be-pager-next')
+            time.sleep(1)
+            try:
+                next_btn.click()
+                time.sleep(0.6)
+            except ElementNotInteractableException:
+                break
+    detailed_info_dict['upload_distribution'] = subarea_upload_dict
     browser.quit()
+
+    # 定义存储所有视频详细信息的列表
+    all_video_info_list = []
+    # 获取详细信息访问的接口
+    api_url = 'http://api.bilibili.com/x/web-interface/view?bvid={}'
+    can_use = check_ip(get_all_ip2())
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36"
+    }
+    for i in range(len(video_bv_list)):
+        if random.randint(0, 110) == 1:
+            response = requests.get(api_url.format(video_bv_list[i]), headers=headers)
+        else:
+            response = requests.get(api_url.format(video_bv_list[i]), headers=headers, proxies=random.choice(can_use))
+        try:
+            response.raise_for_status()
+        except Exception as e:
+            print(e)
+            return
+        response.encoding = response.apparent_encoding
+        json_str = response.text
+        video_dict = json.loads(json_str)
+        video_info = video_dict['data']
+        # 定义字典存储所有视频的详细信息
+        all_video_info_dict = {}
+        all_video_info_dict['bvid'] = video_info['bvid']
+        all_video_info_dict['aid'] = video_info['aid']
+        all_video_info_dict['subarea'] = video_subarea_list[i]
+        all_video_info_dict['tname'] = video_info['tname']      # 子分区标签
+        all_video_info_dict['video_length'] = video_info['duration']
+        all_video_info_dict['view'] = video_info['stat']['view']
+        all_video_info_dict['bullet_subtitles'] = video_info['stat']['danmaku']     # 弹幕数量
+        all_video_info_dict['comments'] = video_info['stat']['reply']
+        all_video_info_dict['favorite'] = video_info['stat']['favorite']
+        all_video_info_dict['coin'] = video_info['stat']['coin']
+        all_video_info_dict['share'] = video_info['stat']['share']
+        all_video_info_dict['his_rank'] = video_info['stat']['his_rank']        # 历史最高排名
+        all_video_info_dict['like'] = video_info['stat']['like']
+        # print(all_video_info_dict)
+        all_video_info_list.append(all_video_info_dict)
+    detailed_info_dict['all_video'] = all_video_info_list
+
     return detailed_info_dict
 
 
 # 定义一个判断元素是否存在的函数
-def element_exists(element, tag_name):
+def element_exists(element, content, identity):
     try:
-        element.find_element_by_tag_name(tag_name)
+        if identity == 'tag_name':
+            element.find_element_by_tag_name(content)
+        elif identity == 'css':
+            element.find_element_by_css_selector(content)
         return True
     except NoSuchElementException:
         return False
@@ -226,7 +304,7 @@ def get_tags_and_weight(output_path):
         for tag_element in tag_elements:
             tag_name = tag_element.text
             # 判断该标签是否标蓝（蓝色代表该标签更重要，所占权重更大）
-            if element_exists(tag_element, 'img'):
+            if element_exists(tag_element, 'img', 'tag_name'):
                 tag_weight = round(url_pts_dict[video_url] * weight, 1)
             else:
                 tag_weight = round(url_pts_dict[video_url] * (1 - weight), 1)
@@ -264,13 +342,14 @@ def get_subarea_heat():
             pts = video_element.find_element_by_css_selector('div.pts').find_element_by_tag_name('div').text
             pts_sum = pts_sum + int(pts)
         subarea_pts_dict[subarea_name] = pts_sum
-        print(subarea_name + ": " + str(pts_sum))
+        # print(subarea_name + ": " + str(pts_sum))
 
     browser.quit()
     return subarea_pts_dict
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
+    get_detailed_info(546195)
     # info_list = get_up_info()
     # for info in info_list:
     #     print(info)
@@ -278,3 +357,4 @@ def get_subarea_heat():
     # print(get_subarea_heat())
     # get_tags_and_weight('D://comment.txt')
     # get_subarea_heat()
+    # get_up_video(777536)
