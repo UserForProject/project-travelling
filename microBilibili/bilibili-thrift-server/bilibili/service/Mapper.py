@@ -5,11 +5,11 @@ import time
 import pymongo
 
 from bilibili.api.ttypes import UserInfo, UserDetailedInfo
-from bilibili.spider.biliob_fans_spider import get_detailed_info
+from bilibili.spider.biliob_fans_spider import get_detailed_info,get_up_all_video_info
 
 user = "root"
 pwd = "root"
-host = "192.168.2.108"
+host = "192.168.1.105"
 port = "27017"
 
 # 运行前先运行update包中的updateBeforeMR脚本
@@ -83,11 +83,15 @@ class Mapper:
         detail.videos = detailInfo["video"]
         detail.face = detailInfo["face"]
         detail.subareaNum = detailInfo["upload_distribution"]
-        detail.allVideos = []
-        for video in detailInfo["all_video"]:
-            detail.allVideos.append({"play": str(video["view"]), "favorite": str(video["favorite"])})
+        # detail.allVideos = []
         detail.fansData = []
-        data = self.bilibiliData["users"].find({"uid": uid}, {"_id": 0, "change": 0, "face": 0, "name": 0, "uid": 0})
+        videos = list(self.bilibiliData["users"].find({"uid": uid}, {"videos": 1}))
+        # if len(videos) != 0 and "videos" in videos[0].keys():
+        #     detail.allVideos = [{"play": str(item["view"]), "favorite": str(item["favorite"])} for item in videos[0]["videos"]]
+        # else:
+        #     videos = get_up_all_video_info(uid)
+        #     detail.allVideos = [{"play": str(item["view"]), "favorite": str(item["favorite"])} for item in videos]
+        data = self.bilibiliData["users"].find({"uid": uid}, {"_id": 0, "change": 0, "face": 0, "name": 0, "uid": 0, "videos": 0})
         data = list(data)
         # 判断是否有粉丝数据
         if len(data) == 0:
@@ -124,6 +128,6 @@ class Mapper:
         return res
 
 
-if __name__ == "__main__":
-    m = Mapper()
-    print(m.getUpInfo(523085457))
+# if __name__ == "__main__":
+#     m = Mapper()
+#     print(m.getUpInfo(546195))

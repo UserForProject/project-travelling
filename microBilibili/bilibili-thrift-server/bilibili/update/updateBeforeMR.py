@@ -3,11 +3,12 @@ import datetime
 import pymongo
 
 from bilibili.spider.biliob_fans_spider import get_up_info, get_fans_num, get_top50_up_info, get_subarea_heat, \
-    get_tags_and_weight
+    get_tags_and_weight, get_up_all_video_info
+#from bilibili.spider.potential_data_for_prediction import get_av_numbers, get_potential_data
 
 user = "root"
 pwd = "root"
-host = "192.168.2.108"
+host = "192.168.1.105"
 port = "27017"
 client = pymongo.MongoClient('mongodb://{}:{}@{}:{}/'.format(user, pwd, host, port))
 bilibiliData = client["bilibili"]
@@ -23,8 +24,6 @@ def getUpInfo():
     removeDate = today + datetime.timedelta(-7)
     today = today.strftime("%Y%m%d")
     yesterday = yesterday.strftime("%Y%m%d")
-    removeDate = removeDate.strftime("%Y%m%d")
-    users.update_many({}, {"$unset": {removeDate: ""}})
     upInfos = get_up_info()
     # 判断是否为第一次运行程序，防止重复更新uid带来的资源消耗
     if users.count() != 0:
@@ -72,9 +71,25 @@ def getSubAreaInfo():
         for key in data:
             subAreaHeat.insert_one({"name": key, "heat": data[key]})
 
+# def getVideoData():
+#     """
+#     获取排行榜上1200个视频的详细信息（已丢弃该功能）
+#     """
+#     data = get_potential_data()
+#     videos = bilibiliData["videos"]
+#     for item in data:
+#         print(item)
+#         videos.insert_one(item)
+
+def getUpVideos(uid):
+    videos = get_up_all_video_info(uid)
+    users = bilibiliData["users"]
+    users.update_one({"uid": uid}, {"$set":{"videos": videos}}, True)
+
 
 if __name__ == "__main__":
     getUpInfo()
+    #getUpVideos(546195)
     getSubAreaInfo()
     # 设置词云输入文件的位置
-    get_tags_and_weight("F:\workspace\ideaprojects\wordcloud\input\wc\input.txt")
+    get_tags_and_weight("E:\Workspace\IdeaProjects\wordcloud\input\wc\input2.txt")

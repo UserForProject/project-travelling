@@ -2,14 +2,14 @@ import pymongo
 
 user = "root"
 pwd = "root"
-host = "192.168.2.108"
+host = "192.168.1.105"
 port = "27017"
 client = pymongo.MongoClient('mongodb://{}:{}@{}:{}/'.format(user, pwd, host, port))
 bilibiliData = client["bilibili"]
 
 if __name__ == "__main__":
     # 设置词云输出文件的位置
-    with open("F:\workspace\ideaprojects\wordcloud\output\wc\part-r-00000", "rb") as f:
+    with open("E:\Workspace\IdeaProjects\wordcloud\output\wc\part-r-00000", "rb") as f:
         # 每次更新都删除集合重建，防止插入错误
         bilibiliData["wordCloud"].drop()
         wordCloud = bilibiliData["wordCloud"]

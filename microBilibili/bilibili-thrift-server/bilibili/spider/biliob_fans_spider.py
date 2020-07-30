@@ -178,10 +178,34 @@ def get_detailed_info(uid):
     # 获取up主分区投稿数量和其投稿的所有视频的bv号
     # 定义字典存储 分区名称：投稿数量
     subarea_upload_dict = {}
+    tag_elements = browser.find_element_by_id('submit-video-type-filter').find_elements_by_tag_name('a')
+    for i in range(1, len(tag_elements)):
+        # 获取up主分区投稿数量
+        subarea_name = re.split('[0-9]', tag_elements[i].text)[0]
+        upload_num = int(tag_elements[i].text.split(subarea_name)[1])
+        print(subarea_name + ": " + str(upload_num))
+        subarea_upload_dict[subarea_name] = upload_num
+    detailed_info_dict['upload_distribution'] = subarea_upload_dict
+
+    browser.quit()
+    return detailed_info_dict
+
+
+# 获取up主所有投稿视频的详细信息
+def get_up_all_video_info(uid):
+    url = 'https://space.bilibili.com/{}'.format(uid)
+    # 设置无头浏览器进行爬取
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    browser = webdriver.Chrome(chrome_options=chrome_options)
+    #browser = webdriver.Chrome()
+    browser.get(url)
+
     # 定义列表存储其发布的所有视频的bv号
     video_bv_list = []
     # 定义列表存储该视频对应的分区
     video_subarea_list = []
+    browser.find_element_by_css_selector("a.n-btn.n-video.n-audio.n-article.n-album").click()
     tag_elements = browser.find_element_by_id('submit-video-type-filter').find_elements_by_tag_name('a')
     for i in range(1, len(tag_elements)):
         # 点击分区标签
@@ -189,8 +213,7 @@ def get_detailed_info(uid):
         # 获取up主分区投稿数量
         subarea_name = re.split('[0-9]', tag_elements[i].text)[0]
         upload_num = int(tag_elements[i].text.split(subarea_name)[1])
-        subarea_upload_dict[subarea_name] = upload_num
-        time.sleep(0.5)
+        time.sleep(0.6)
         while True:
             bvid_elements = browser.find_elements_by_css_selector('li.small-item.fakeDanmu-item')
             for bvid_element in bvid_elements:
@@ -204,7 +227,6 @@ def get_detailed_info(uid):
                 time.sleep(0.6)
             except ElementNotInteractableException:
                 break
-    detailed_info_dict['upload_distribution'] = subarea_upload_dict
     browser.quit()
 
     # 定义存储所有视频详细信息的列表
@@ -246,9 +268,8 @@ def get_detailed_info(uid):
         all_video_info_dict['like'] = video_info['stat']['like']
         # print(all_video_info_dict)
         all_video_info_list.append(all_video_info_dict)
-    detailed_info_dict['all_video'] = all_video_info_list
 
-    return detailed_info_dict
+    return all_video_info_list
 
 
 # 定义一个判断元素是否存在的函数
@@ -267,10 +288,10 @@ def element_exists(element, content, identity):
 def get_tags_and_weight(output_path):
     url = 'https://www.bilibili.com/ranking'
     # 设置无头浏览器进行爬取
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')
-    browser = webdriver.Chrome(chrome_options=chrome_options)
-    # browser = webdriver.Chrome()
+    # chrome_options = Options()
+    # chrome_options.add_argument('--headless')
+    # browser = webdriver.Chrome(chrome_options=chrome_options)
+    browser = webdriver.Chrome()
     browser.get(url)
 
     url_pts_dict = {}
@@ -347,9 +368,10 @@ def get_subarea_heat():
     browser.quit()
     return subarea_pts_dict
 
-
+#
 if __name__ == '__main__':
-    get_detailed_info(546195)
+    get_up_all_video_info(546195)
+    # get_detailed_info(546195)
     # info_list = get_up_info()
     # for info in info_list:
     #     print(info)
