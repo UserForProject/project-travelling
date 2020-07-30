@@ -19,7 +19,7 @@ class ServerHandler:
         """
         返回当日涨粉最快的前五十位up主具体信息，包括id，昵称，头像url和涨粉数
         """
-        return self.m.getTopDecreasingUp()
+        return self.m.getTopIncreasingUp()
 
     def getTopDecreasingUp(self):
         """
