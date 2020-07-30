@@ -53,7 +53,7 @@ public class InfoController {
     //返回up主的具体信息，并返回Json对象
     @RequestMapping(value="/getUpInfo")
     @ResponseBody
-    public UserDetailedInfo getUpInfo(){   //Uid 为从前端输入框通过ajax post请求传过来的参数
+    public UserDetailedInfo getUpInfo(@RequestParam(value = "uid") String uid){   //Uid 为从前端输入框通过ajax post请求传过来的参数
         int id = 546195;
         UserDetailedInfo upinfo = this.getupinfo(id);
         return upinfo;

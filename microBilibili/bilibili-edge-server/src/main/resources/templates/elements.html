@@ -73,7 +73,6 @@
 			<section class="wrapper style5">
 			
 				<div class="templatemo-content-container"  th:fragment="commoninfo" id="commoninfo">
-
 					<div class="templatemo-flex-row flex-content-row">
 						<div class="col-1">
 							<div class="templatemo-content-widget orange-bg">
@@ -91,7 +90,7 @@
 								<div class="media">
 									<div class="media-left">
 										<a>
-											<img class="media-object img-circle" th:src="@{https://i0.hdslb.com/bfs/archive/4cbdd774bfa939804beafe3a54a8a686bb667496.jpg@380w_240h_100Q_1c.webp}">
+											<img class="media-object img-circle" th:src="@{${face}}">
 										</a>
 									</div>
 									<div class="media-body">
@@ -139,26 +138,24 @@
 							</div>
 						</div>
 					</div> <!-- Second row ends -->
-
 					<div class="templatemo-flex-row flex-content-row">
-						
 						<div class="templatemo-content-widget white-bg col-1 text-center">
 						  <i class="fa fa-times"></i>
 						  <h2 class="text-uppercase">Top1</h2>
-						  <p class="text-uppercase margin-bottom-10" th:text="${video_one}">null</p>
-						  <img th:src="@{https://i0.hdslb.com/bfs/archive/4cbdd774bfa939804beafe3a54a8a686bb667496.jpg@380w_240h_100Q_1c.webp}" alt="Bicycle" class="img-circle img-thumbnail"/>
+						  <p class="text-uppercase margin-bottom-10" th:text="${video_one}"></p>
+							<img th:src="@{(${cover_one})}" alt="Bicycle" class="img-circle img-thumbnail"/>
 						</div>
 						<div class="templatemo-content-widget white-bg col-1 text-center">
 							<i class="fa fa-times"></i>
 							<h2 class="text-uppercase">Top2</h2>
-							<p class="text-uppercase margin-bottom-10" th:text="${video_two}">null</p>
-							<img th:src="@{https://i0.hdslb.com/bfs/archive/4cbdd774bfa939804beafe3a54a8a686bb667496.jpg@380w_240h_100Q_1c.webp}" alt="Bicycle" class="img-circle img-thumbnail"/>
+							<p class="text-uppercase margin-bottom-10" th:text="${video_two}"></p>
+							<img th:src="@{(${cover_two})}" alt="Bicycle" class="img-circle img-thumbnail"/>
 						  </div>
 						  <div class="templatemo-content-widget white-bg col-1 text-center">
 							<i class="fa fa-times"></i>
 							<h2 class="text-uppercase">Top3</h2>
-							<p class="text-uppercase margin-bottom-10" th:text="${video_three}">null</p>
-							<img th:src="@{https://i0.hdslb.com/bfs/archive/4cbdd774bfa939804beafe3a54a8a686bb667496.jpg@380w_240h_100Q_1c.webp}" alt="Bicycle" class="img-circle img-thumbnail"/>
+							<p class="text-uppercase margin-bottom-10" th:text="${video_three}"></p>
+							<img th:src="@{(${cover_three})}" alt="Bicycle" class="img-circle img-thumbnail"/>
 						  </div>
 					  </div>
 				</div>
