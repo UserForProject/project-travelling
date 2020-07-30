@@ -1,14 +1,18 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
   <title>B站up视频分区热度信息可视化</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <link rel="stylesheet" href="/assets/css/main.css" />
+  <link href="/assets/css/templatemo-style.css" rel="stylesheet">
   <noscript>
     <link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
     <script src="/assets/js/echarts.common.js"></script>
+  <script type="text/javascript">
+
+  </script>
 </head>
 
 <body class="landing is-preload">
@@ -57,6 +61,16 @@
               maskImage.src = data.image
 
               maskImage.onload = function () {
+                  $("#Submit").click(function() {
+                    var view_nums= $("input[name='view_nums']").val();
+                    var collect_nums= $("input[name='collect_nums']").val();
+                    var coin_nums= $("input[name='coin_nums']").val();
+                    var transpond_nums= $("input[name='transpond_nums']").val();
+                    var like_nums= $("input[name='like_nums']").val();
+                    var uploadTime = $("input[name='uploadTime']").val();
+                    var url = "/info/prediction";
+                    $("#prediction").load(url,{uploadTime:uploadTime,view:view_nums,favorite:collect_nums,coin:coin_nums,share:transpond_nums,like:like_nums});
+                  });
                 myChart.setOption({
                   //backgroundColor:'#fff',
                   //backgroundColor: 'transparent',
@@ -136,12 +150,79 @@
                 }
               })
 
+
+
             }
+
           </script>
         </header>
 
       </div>
     </section>
+
+    <!-- Two -->
+    <section class="wrapper style5">
+      <div class="templatemo-content col-1 light-gray-bg">
+
+        <div class="templatemo-content-container">
+          <div class="templatemo-content-widget white-bg">
+            <h2 class="margin-bottom-10">Up视频预测</h2>
+            <p>Here goes the forms</p>
+            <form action="index" class="templatemo-login-form" method="post" enctype="multipart/form-data">
+              <div class="row form-group">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label for="inputFirstName">播放量</label>
+                  <input type="text" class="form-control"  placeholder="播放量" name="view_nums">
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label for="inputLastName">收藏数</label>
+                  <input type="text" class="form-control"  placeholder="收藏数" name="collect_nums">
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label for="inputUsername">硬币数</label>
+                  <input type="text" class="form-control" placeholder="硬币数" name="coin_nums">
+                </div>
+              </div>
+              <div class="row form-group">
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label for="inputEmail">转发数</label>
+                  <input type="text" class="form-control" placeholder=" 转发数" name="transpond_nums">
+                </div>
+
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label for="inputNewPassword">点赞数</label>
+                  <input type="text" class="form-control" id="inputNewPassword" placeholder="点赞数" name="like_nums">
+                </div>
+                <div class="col-lg-6 col-md-6 form-group">
+                  <label for="inputNewPassword">上传日期</label>
+                  <input type="text" class="form-control" id="uploadTime" placeholder="上传日期" name="uploadTime">
+                </div>
+
+              </div>
+
+              <div class="form-group text-right">
+<!--                <button type="submit" class="templatemo-button" style="background-color: #21b2a6;" id="Submit" name="Submit">-->
+<!--                  Submit-->
+<!--                </button>-->
+                <input type="button" value="Submit" class="templatemo-button" style="background-color: #21b2a6;" id="Submit">
+                <button type="reset" class="templatemo-button">
+                  Reset
+                </button>
+              </div>
+              <div class="col-lg-6 col-md-6 form-group" th:fragment="prediction" id="prediction">
+                <label for="inputFirstName">Answer</label>
+                <textarea type="text" class="form-control" th:text="${result}"></textarea>
+              </div>
+            </form>
+          </div>
+          <footer class="text-right">
+
+          </footer>
+
+        </div>
+      </div>
+    </section>
+
     <!-- Three -->
     <section id="three" class="wrapper style3 special">
 

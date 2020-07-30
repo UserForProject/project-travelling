@@ -1,6 +1,5 @@
 package com.test.bilibili.controller;
 
-import com.test.bilibili.domain.po.MyData;
 import com.test.bilibili.thrift.ServiceProvider;
 import com.test.thrift.bilibili.BilibiliService;
 import com.test.thrift.bilibili.UserDetailedInfo;
@@ -12,7 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +56,7 @@ public class InfoController {
     @RequestMapping(value="/getUpInfo")
     @ResponseBody
     public UserDetailedInfo getUpInfo(@RequestParam(value = "uid") String uid){   //Uid 为从前端输入框通过ajax post请求传过来的参数
-        int id = 546195;
+        int id = Integer.parseInt(uid);
         UserDetailedInfo upinfo = this.getupinfo(id);
         return upinfo;
     }
@@ -78,69 +80,95 @@ public class InfoController {
     //Up分区热度
     @RequestMapping(value = "/subareaNum")
     @ResponseBody
-    public List<MyData> getSubAreaNum(@RequestParam(value = "uid") String uid){
-        List<MyData> subareaNum = this.fillMyData2();
+    public Map<String, Integer> getSubAreaNum(@RequestParam(value = "uid") String uid){
+        int id = Integer.parseInt(uid);
+        UserDetailedInfo upinfo = this.getupinfo(id);
+        Map<String, Integer> subareaNum = upinfo.subareaNum;
         return subareaNum;
+    }
+
+    //获取Up主视频预测值
+    @RequestMapping(value = "/prediction")
+    public String predictGrade(Model model,
+                             @RequestParam(value = "uploadTime") String uploadTime,
+                             @RequestParam(value = "view") String view_nums,
+                             @RequestParam(value = "favorite") String favorite_nums,
+                             @RequestParam(value = "coin") String coin_nums,
+                             @RequestParam(value = "share") String share_nums,
+                             @RequestParam(value = "like") String like_nums) {
+
+        // 传入的参数依次对应上传视频的日期 播放量 收藏数 硬币数 转发数 点赞数
+        // 上传视频的日期如果不是“2020-7-30”这种格式的话则会返回-1，可以加一个网页上的小提示说明输入格式有误
+        int view = Integer.parseInt(view_nums);
+        int favorite = Integer.parseInt(favorite_nums);
+        int coin = Integer.parseInt(coin_nums);
+        int share = Integer.parseInt(share_nums);
+        int like = Integer.parseInt(like_nums);
+        long uploadTimestamp = 0;
+        try {
+            uploadTimestamp = (new SimpleDateFormat("yyyy-MM-dd")).parse(uploadTime).getTime() / 1000;
+        } catch (ParseException e) {
+            String result_wrong_one = "日期输入格式有误，请重新输入！";
+            model.addAttribute("result",result_wrong_one);
+            return "heat::prediction";
+        }
+        // 获取当日零点时间戳
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String today = simpleDateFormat.format(date.getTime());
+        System.out.println("当天日期" + today);
+        long todayTimestamp = simpleDateFormat.parse(today, new ParsePosition(0)).getTime();
+        if(uploadTimestamp - todayTimestamp > 0){
+            // 对应当前时间比上传时间更靠前的情况，说明用户输入有误
+            String result_wrong_two = "日期输入有误，请检查当前日期是否比上传日期更靠前，然后重新输入！！";
+            model.addAttribute("result",result_wrong_two);
+            return "heat::prediction";
+        }
+        // 计算得到平均播放增长量
+        double averageViewIncrease = view * 1.0 / (uploadTimestamp - todayTimestamp + 1);
+//        double averageViewIncrease = view * 1.0 / 278420.0;
+
+        // 平均数
+        double avg1 = 2.34562582e+00;   double avg2 = 6.42593044e+04;   double avg3 = 6.33671994e+04;
+        double avg4 = 1.68381311e+04;   double avg5 = 1.08385728e+05;   double avgY = 3.22437882e+05;
+        // 标准差
+        double stdDev1 = 1.52432101e+02;    double stdDev2 = 3.68272968e+10;    double stdDev3 = 4.40729184e+10;
+        double stdDev4 = 4.89427211e+09;    double stdDev5 = 6.01396466e+10;    double stdDevY = 1.82400924e+11;
+        // 标准化
+        double para1 = (averageViewIncrease - avg1) / stdDev1;
+        double para2 = (favorite - avg2) / stdDev2;
+        double para3 = (coin - avg3) / stdDev3;
+        double para4 = (share - avg4) / stdDev4;
+        double para5 = (like - avg5) / stdDev5;
+        // 参数值
+        double theta1 = 2.01321618e-05; double theta2 = 2.33199924e-01; double theta3 = 3.88139166e-01;
+        double theta4 = 5.65243002e-03; double theta5 = 1.02238574e-01;
+
+        // 使用线性模型输出标准化的结果
+        double y = theta1*para1 + theta2*para2 + theta3*para3 + theta4*para4 + theta5*para5;
+        double result = y * stdDevY + avgY;
+        model.addAttribute("result",result);
+        return "heat::prediction";
     }
     //查找up主信息--search功能
     @RequestMapping({"/getupcommoninfo"})
     public String getupname(Model model,@RequestParam(value = "uid") String uid){
-//        //up uid
-//        int id = Integer.parseInt(uid);
-//        UserDetailedInfo upinfo = this.getupinfo(id);
-//        //up 昵称
-//        String name = upinfo.name;
-//        //up 视频播放量
-//        int playAmount = upinfo.playAmount/10000;
-//        String playAmounts = String.valueOf(playAmount)+"万";
-//        //up 粉丝数 （为方便阅读，显示xxx万）
-//        int follower = upinfo.follower/10000;
-//        String followers = String.valueOf(follower)+"万";
-//        //up 点赞数 （为方便阅读，显示xxx万）
-//        int like = upinfo.likes/10000;
-//        String likes = String.valueOf(like)+"万";
-//        //up 阅读专栏阅读量 （为方便阅读，显示xxx万，若阅读量为0，则表明该up主没有写过阅读专栏）
-//        int readingAmount = upinfo.readingAmount;
-//        String readingAmounts;
-//        if(readingAmount==0){
-//            readingAmounts = name+" 暂时没有写过专栏阅读哦~";
-//        }else if(readingAmount>10000){
-//            readingAmount = readingAmount/10000;
-//            readingAmounts = String.valueOf(readingAmount)+"万";
-//        }else{
-//            readingAmounts = String.valueOf(readingAmount);
-//        }
-//        //up 等级
-//        int level = upinfo.level;
-//        String levels = String.valueOf(level)+"级";
-//        //up 头像
-//        String face = upinfo.face;
-//        // 三个热门视频的标题
-//        List<Map<String, String>> videos = upinfo.videos;
-//        String video_one = videos.get(0).get("video_title");
-//        String video_two = videos.get(1).get("video_title");
-//        String video_three = videos.get(2).get("video_title");
-//        // 三个热门视频的视频封面
-//        String cover_one = videos.get(0).get("video_cover");
-//        String cover_two = videos.get(1).get("video_cover");
-//        String cover_three = videos.get(2).get("video_cover");
-
         //up uid
-//        int id = Integer.parseInt(uid);
-//        UserDetailedInfo upinfo = this.getupinfo(id);
+        int id = Integer.parseInt(uid);
+        UserDetailedInfo upinfo = this.getupinfo(id);
         //up 昵称
-        String name = "老番茄";
+        String name = upinfo.name;
         //up 视频播放量
-        int playAmount = 1257624578/10000;
+        int playAmount = upinfo.playAmount/10000;
         String playAmounts = String.valueOf(playAmount)+"万";
         //up 粉丝数 （为方便阅读，显示xxx万）
-        int follower = 12394694/10000;
+        int follower = upinfo.follower/10000;
         String followers = String.valueOf(follower)+"万";
         //up 点赞数 （为方便阅读，显示xxx万）
-        int like = 59630766/10000;
+        int like = upinfo.likes/10000;
         String likes = String.valueOf(like)+"万";
         //up 阅读专栏阅读量 （为方便阅读，显示xxx万，若阅读量为0，则表明该up主没有写过阅读专栏）
-        int readingAmount = 0;
+        int readingAmount = upinfo.readingAmount;
         String readingAmounts;
         if(readingAmount==0){
             readingAmounts = name+" 暂时没有写过专栏阅读哦~";
@@ -151,19 +179,23 @@ public class InfoController {
             readingAmounts = String.valueOf(readingAmount);
         }
         //up 等级
-        int level = 6;
+        int level = upinfo.level;
         String levels = String.valueOf(level)+"级";
         //up 头像
-        String face = "https://i2.hdslb.com/bfs/face/bc5ca101313d4db223c395d64779e76eb3482d60.jpg_64x64.jpg";
+        String face = upinfo.face;
         // 三个热门视频的标题
-        //List<Map<String, String>> videos = upinfo.videos;
-        String video_one = "最强自夸王！！！！！";
-        String video_two = "【老番茄】我毕业啦！！";
-        String video_three = "【老番茄】史上最骚杀手(第一集)";
+        List<Map<String, String>> videos = upinfo.videos;
+        String video_one = videos.get(0).get("video_title");
+        String video_two = videos.get(1).get("video_title");
+        String video_three = videos.get(2).get("video_title");
         // 三个热门视频的视频封面
-        String cover_one = "https://i1.hdslb.com/bfs/archive/202bc40ecf4991d21df91f52a2d112eddb977de1.jpg@380w_240h_100Q_1c.webp";
-        String cover_two = "https://i2.hdslb.com/bfs/archive/d037378fca07ba2fe8a673ab58409f6f225c7214.jpg@380w_240h_100Q_1c.webp";
-        String cover_three = "https://i1.hdslb.com/bfs/archive/19da21a55fe51d92a3c8d3f9b4ee7467b79257c2.jpg@380w_240h_100Q_1c.webp";
+        String cover_one = videos.get(0).get("video_cover");
+        String cover_two = videos.get(1).get("video_cover");
+        String cover_three = videos.get(2).get("video_cover");
+        //https协议降为http协议
+//        cover_one = replaceIndex(4,cover_one,"");
+//        cover_two = replaceIndex(4,cover_two,"");
+//        cover_three = replaceIndex(4,cover_three,"");
 
         model.addAttribute("name",name);
         model.addAttribute("playAmount",playAmounts);
@@ -180,23 +212,12 @@ public class InfoController {
         model.addAttribute("cover_three",cover_three);
         return "elements::commoninfo";
     }
-    public List<MyData> fillMyData2(){
-        MyData md201 = new MyData("音乐",5);
-        MyData md202 = new MyData("游戏",272);
-        MyData md203 = new MyData("鬼畜",1);
-        MyData md204 = new MyData("生活",33);
-        List<MyData> md2s = new ArrayList<>();
-        md2s.add(md201);
-        md2s.add(md202);
-        md2s.add(md203);
-        md2s.add(md204);
-        return md2s;
 
+
+    //替换字符串中特定位置的字符
+    private static String replaceIndex(int index,String res,String str){
+        return res.substring(0, index)+str+res.substring(index+1);
     }
-
-
-
-
 
     //
     //返回抓取信息的函数

@@ -6,14 +6,14 @@
 	<title>搜索Up</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<!-- 防止Ajax请求第三方资源 403 -->
+	<meta name="referrer" content="no-referrer" />
+
 	<link href="/assets/css/templatemo-style.css" rel="stylesheet">
 	<link rel="stylesheet" href="/assets/css/main.css" />
 	<noscript>
 		<link rel="stylesheet" href="/assets/css/noscript.css" /></noscript>
 	<script src="/assets/js/echarts.js"></script>
-
-
-
 </head>
 
 <body class="is-preload">
@@ -78,7 +78,6 @@
 							<div class="templatemo-content-widget orange-bg">
 								<i class="fa fa-times"></i>
 								<div class="media">
-
 									<div class="media-body">
 										<h2 class="media-heading text-uppercase">Up昵称</h2>
 										<p th:text="${name}"></p>
@@ -264,30 +263,30 @@
 											}
 										},
 										indicator: [{ // 雷达图的指示器，用来指定雷达图中的多个变量（维度）,跟data中 value 对应
-											name: '高中',
+											name: '',
 											// 指示器名称
 											max: 15000,
 											// 指示器的最大值，可选，建议设置
 											//color: '#fff' // 标签特定的颜色。
 										},
 											{
-												name: '专科',
+												name: '',
 												max: 10000
 											},
 											{
-												name: '本科',
+												name: '',
 												max: 10000
 											},
 											{
-												name: '硕士',
+												name: '',
 												max: 10000
 											},
 											{
-												name: '博士',
+												name: '',
 												max: 10000
 											},
 											{
-												name:'博士后',
+												name:'',
 												max:10000
 											}]
 									}],
@@ -313,7 +312,7 @@
 										data: [
 											{
 												name: 'up信息',
-												value: [13408, 5065, 5947, 8356, 3025,4199],
+												value: [],
 												symbol: 'circle',
 												symbolSize: 8,
 												label: {
@@ -358,8 +357,6 @@
 						<div id="main3" style="width: 100%;height:500px;"></div>
 						<script src="/assets/js/jquery.min.js"></script>
 						<script type="text/javascript">
-
-
 							// 基于准备好的dom，初始化echarts实例
 							var myChart = echarts.init(document.getElementById('main3'));
 
@@ -418,6 +415,7 @@
 									myChart.showLoading({text : '正在加载...'});
 									myChart1.showLoading({text : '正在加载...'});
 									//由于信息抓取速度较慢，请耐心等待直到页面显示 get it! 后再对页面进行其他操作！！！
+									// ajax请求返回与参数 uid 相对应的up主信息
 									$.ajax({
 										type:"POST",
 										url:"/info/getUpInfo",
@@ -432,86 +430,68 @@
 													if(result[key].length==0) //若数据集为空，则表明该up主粉丝数没有进入前600名
 														alert("His/Her fans are not enough to show,please change another gay!")
 													else{  //若数据集不为空，则正常注入数据
-														alert("get it!")
 														myChart.setOption({
 															series: [{
 																data: result[key]
 															}]
 														});
-														$("#loadingg").empty();
+
 													}
+												};
+												if(key=="subareaNum"){  ////通过遍历寻找Json中的subareaNum
+													var result1 = result[key];
+													//得到数据后取消加载提示
+													myChart1.hideLoading();
+													alert("get it!")
+													var nums=[];
+													var both=[];
+													var maxnum=0;
+													//求所有num最大值，将其设为max
+													for (var key1 in result1){
+														if(maxnum<result1[key1]){
+															maxnum=result1[key1];
+														}
+													}
+
+													//
+													for (var key1 in result1){
+														nums.push(result1[key1]);
+														both.push({
+															name : key1,
+															max : maxnum
+														})
+													}
+													//雷达图插入数据
+													myChart1.setOption({
+														radar: [{ // 雷达图坐标系组件，只适用于雷达图。
+															indicator: both
+														}],
+														series: [{
+															data: [
+																{
+																	value: nums,
+																}]
+														},
+														]
+													});
+													//取消加载动图的显示
+													$("#loadingg").empty();
 												}
 											}
 
 										},
+										//若无法得到数据，则提示 "data error"
 										error:function(){
 											alert("data error");
 										},
 
 									});
-
-									$.ajax({
-										type:"POST",
-										url:"/info/subareaNum",
-										data:{uid:uidnum},
-										dataType: 'json',
-										async:true,
-										success:function(result){
-											myChart1.hideLoading();
-											var nums=[];
-											var both=[];
-											var maxnum=0;
-											$.each(result, function (index, item) {
-												//求所有num最大值，将其设为max
-														if(maxnum<item.num){
-															maxnum=item.num;
-														}
-													}
-											);
-											$.each(result, function (index, item) {
-														nums.push(item.num);
-														both.push({
-															name : item.category,
-															max : maxnum
-														})
-													}
-											);
-											myChart1.setOption({
-												radar: [{ // 雷达图坐标系组件，只适用于雷达图。
-													indicator: both
-												}],
-												series: [{
-													data: [
-														{
-															value: nums,
-														}]
-												},
-												]
-											});
-
-
-										},
-										error:function(){
-											alert("data error");
-										},
-
-									});
-									// var uri = "/info/getupcommoninfo";
-									// $("#commoninfo").load(uri,{uid:uidnum});
-
 
 								});
 
 							});
 						</script>
 					</section>
-
-
-
-
-
-
-
 
 				</div>
 
