@@ -37,7 +37,12 @@ struct UserDetailedInfo {
     # up主头像图片的url
     10:string face,
     # up主七天内的粉丝数据
-    11:list<i32> fansData
+    11:list<i32> fansData,
+    # 我刚加的！！！！！！！
+    # 投稿的分区及数量
+    12:map<string, i32> subareaNum,
+    # up主所有投稿视频的详细信息
+    13:list<map<string, string>> allVideos
 }
 
 service BilibiliService {

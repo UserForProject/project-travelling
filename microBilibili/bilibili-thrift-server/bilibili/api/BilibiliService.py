@@ -452,11 +452,11 @@ class getTopUpFans_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype26, _size23) = iprot.readListBegin()
-                    for _i27 in range(_size23):
-                        _elem28 = UserInfo()
-                        _elem28.read(iprot)
-                        self.success.append(_elem28)
+                    (_etype51, _size48) = iprot.readListBegin()
+                    for _i52 in range(_size48):
+                        _elem53 = UserInfo()
+                        _elem53.read(iprot)
+                        self.success.append(_elem53)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -473,8 +473,8 @@ class getTopUpFans_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter29 in self.success:
-                iter29.write(oprot)
+            for iter54 in self.success:
+                iter54.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -565,11 +565,11 @@ class getTopIncreasingUp_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype33, _size30) = iprot.readListBegin()
-                    for _i34 in range(_size30):
-                        _elem35 = UserInfo()
-                        _elem35.read(iprot)
-                        self.success.append(_elem35)
+                    (_etype58, _size55) = iprot.readListBegin()
+                    for _i59 in range(_size55):
+                        _elem60 = UserInfo()
+                        _elem60.read(iprot)
+                        self.success.append(_elem60)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -586,8 +586,8 @@ class getTopIncreasingUp_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter36 in self.success:
-                iter36.write(oprot)
+            for iter61 in self.success:
+                iter61.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -678,11 +678,11 @@ class getTopDecreasingUp_result(object):
             if fid == 0:
                 if ftype == TType.LIST:
                     self.success = []
-                    (_etype40, _size37) = iprot.readListBegin()
-                    for _i41 in range(_size37):
-                        _elem42 = UserInfo()
-                        _elem42.read(iprot)
-                        self.success.append(_elem42)
+                    (_etype65, _size62) = iprot.readListBegin()
+                    for _i66 in range(_size62):
+                        _elem67 = UserInfo()
+                        _elem67.read(iprot)
+                        self.success.append(_elem67)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -699,8 +699,8 @@ class getTopDecreasingUp_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.LIST, 0)
             oprot.writeListBegin(TType.STRUCT, len(self.success))
-            for iter43 in self.success:
-                iter43.write(oprot)
+            for iter68 in self.success:
+                iter68.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -915,11 +915,11 @@ class getSubareaPlayAmount_result(object):
             if fid == 0:
                 if ftype == TType.MAP:
                     self.success = {}
-                    (_ktype45, _vtype46, _size44) = iprot.readMapBegin()
-                    for _i48 in range(_size44):
-                        _key49 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val50 = iprot.readI32()
-                        self.success[_key49] = _val50
+                    (_ktype70, _vtype71, _size69) = iprot.readMapBegin()
+                    for _i73 in range(_size69):
+                        _key74 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val75 = iprot.readI32()
+                        self.success[_key74] = _val75
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -936,9 +936,9 @@ class getSubareaPlayAmount_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.MAP, 0)
             oprot.writeMapBegin(TType.STRING, TType.I32, len(self.success))
-            for kiter51, viter52 in self.success.items():
-                oprot.writeString(kiter51.encode('utf-8') if sys.version_info[0] == 2 else kiter51)
-                oprot.writeI32(viter52)
+            for kiter76, viter77 in self.success.items():
+                oprot.writeString(kiter76.encode('utf-8') if sys.version_info[0] == 2 else kiter76)
+                oprot.writeI32(viter77)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1029,11 +1029,11 @@ class getWordCloud_result(object):
             if fid == 0:
                 if ftype == TType.MAP:
                     self.success = {}
-                    (_ktype54, _vtype55, _size53) = iprot.readMapBegin()
-                    for _i57 in range(_size53):
-                        _key58 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val59 = iprot.readDouble()
-                        self.success[_key58] = _val59
+                    (_ktype79, _vtype80, _size78) = iprot.readMapBegin()
+                    for _i82 in range(_size78):
+                        _key83 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val84 = iprot.readDouble()
+                        self.success[_key83] = _val84
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -1050,9 +1050,9 @@ class getWordCloud_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.MAP, 0)
             oprot.writeMapBegin(TType.STRING, TType.DOUBLE, len(self.success))
-            for kiter60, viter61 in self.success.items():
-                oprot.writeString(kiter60.encode('utf-8') if sys.version_info[0] == 2 else kiter60)
-                oprot.writeDouble(viter61)
+            for kiter85, viter86 in self.success.items():
+                oprot.writeString(kiter85.encode('utf-8') if sys.version_info[0] == 2 else kiter85)
+                oprot.writeDouble(viter86)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()

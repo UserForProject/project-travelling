@@ -70,6 +70,7 @@ class Mapper:
         返回up主的具体信息
         """
         detailInfo = get_detailed_info(uid)
+        # print(detailInfo)
         detail = UserDetailedInfo()
         detail.name = detailInfo["name"]
         detail.uid = int(uid)
@@ -81,6 +82,10 @@ class Mapper:
         detail.readingAmount = int(detailInfo["readingAmount"])
         detail.videos = detailInfo["video"]
         detail.face = detailInfo["face"]
+        detail.subareaNum = detailInfo["upload_distribution"]
+        detail.allVideos = []
+        for video in detailInfo["all_video"]:
+            detail.allVideos.append({"play": str(video["view"]), "favorite": str(video["favorite"])})
         detail.fansData = []
         data = self.bilibiliData["users"].find({"uid": uid}, {"_id": 0, "change": 0, "face": 0, "name": 0, "uid": 0})
         data = list(data)
@@ -121,4 +126,4 @@ class Mapper:
 
 if __name__ == "__main__":
     m = Mapper()
-    print(m.getWordCloud())
+    print(m.getUpInfo(523085457))
